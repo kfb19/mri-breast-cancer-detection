@@ -3,4 +3,5 @@ import numpy as np
 import os
 import pydicom
 from tqdm import tqdm
-from skimage.io import imsave
+#from skimage.io import imsave
+
