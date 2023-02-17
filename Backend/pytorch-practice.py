@@ -5,6 +5,7 @@ import os
 import pydicom
 from PIL import Image 
 from tqdm import tqdm
+from skimage.io import imsave
 
 def read_data(boxes_path, mapping_path):
    # Reading the bounding boxes data. 
@@ -67,6 +68,9 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir): 
 
    print("Image saved")
 
+def prepare_data(boxes, data, target_bmp_dir):
+    print()
+
 # Setting file paths needed for using the data. 
 data_path = 'E:\data\manifest-1675379375384' 
 boxes_path = 'E:\data\csvs\Annotation_Boxes.csv'
@@ -78,5 +82,8 @@ if not os.path.exists(target_bmp_dir):
 # Setting the bounding boxes and dicom data variables. 
 boxes, data = read_data(boxes_path, mapping_path) 
 
+# Preparing the data ready for training. 
+prepare_data(boxes, data, target_bmp_dir)
+
 # Saving the dicom image formats as bitmaps. 
-save_dicom_to_bitmap(data, 0, 1, "/Backend")
+#save_dicom_to_bitmap(data, 0, 1, "/Backend")
