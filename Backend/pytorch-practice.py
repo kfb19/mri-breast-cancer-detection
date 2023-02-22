@@ -6,6 +6,8 @@ import pydicom
 from PIL import Image 
 from tqdm import tqdm
 from skimage.io import imsave
+from IPython.display import Image, display
+from random import choice
 
 def read_data(boxes_path, mapping_path):
    # Reading the bounding boxes data. 
@@ -48,28 +50,26 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir): 
          dicom_filename = '/'.join(dicom_filename_split)
          dicom = pydicom.dcmread(dicom_filename)
 
-   # Convert DICOM into numerical numpy array of pixel intensity values
-   img = dicom.pixel_array
+      # Convert DICOM into numerical numpy array of pixel intensity values
+      img = dicom.pixel_array
 
-   # Convert uint16 datatype to float, scaled properly for uint8
-   img = img.astype(np.float) * 255. / img.max()
+      # Convert uint16 datatype to float, scaled properly for uint8
+      img = img.astype(np.float) * 255. / img.max()
 
-   # convert from float -> uint8
-   img = img.astype(np.uint8)
+      # convert from float -> uint8
+      img = img.astype(np.uint8)
 
-   # invert image if necessary, according to DICOM metadata
-   img_type = dicom.PhotometricInterpretation
-   if img_type == "MONOCHROME1":
-            img = np.invert(img)
+      # invert image if necessary, according to DICOM metadata
+      img_type = dicom.PhotometricInterpretation
+      if img_type == "MONOCHROME1":
+               img = np.invert(img)
 
-   # Save final .bmp
-   img.save(bmp_path)
-   #imsave(bmp_path, img)
+      # Save final .bmp
+      #img.save(bmp_path)
+      imsave(bmp_path, img)
 
    print("Image saved")
 
-def prepare_data(boxes, data, target_bmp_dir):
-    print()
 
 # Setting file paths needed for using the data. 
 data_path = 'E:\data\manifest-1675379375384' 
@@ -83,7 +83,50 @@ if not os.path.exists(target_bmp_dir):
 boxes, data = read_data(boxes_path, mapping_path) 
 
 # Preparing the data ready for training. 
-prepare_data(boxes, data, target_bmp_dir)
+#prepare_data(boxes, data, target_bmp_dir)
 
 # Saving the dicom image formats as bitmaps. 
 #save_dicom_to_bitmap(data, 0, 1, "/Backend")
+
+# Image extraction. 
+
+# number of examples for each class
+N_class = 5000
+# counts of examples extracted from each class
+ct_negative = 0
+ct_positive = 0
+
+# initialize iteration index of each patient volume
+vol_idx = -1
+for row_idx, row in tqdm(data.iterrows(), total=N_class*2):
+    # indices start at 1 here
+    new_vol_idx = int((row['original_path_and_filename'].split('/')[1]).split('_')[-1])
+    slice_idx = int(((row['original_path_and_filename'].split('/')[-1]).split('_')[-1]).replace('.dcm', ''))
+
+    # new volume: get tumor bounding box
+    if new_vol_idx != vol_idx:
+        box_row = boxes.iloc[[new_vol_idx-1]]
+        start_slice = int(box_row['Start Slice'])
+        end_slice = int(box_row['End Slice'])
+        assert end_slice >= start_slice
+    vol_idx = new_vol_idx
+
+    # get DICOM filename
+    dcm_fname = str(row['classic_path'])
+    dcm_fname = os.path.join(data_path, dcm_fname)
+
+    # determine slice label:
+    # (1) if within 3D box, save as positive
+    if slice_idx >= start_slice and slice_idx < end_slice: 
+        if ct_positive >= N_class:
+            continue
+        save_dicom_to_bitmap(dcm_fname, 1, vol_idx, target_bmp_dir)
+        ct_positive += 1
+
+    # (2) if outside 3D box by >5 slices, save as negative
+    elif (slice_idx + 5) <= start_slice or (slice_idx - 5) > end_slice:
+        if ct_negative >= N_class:
+            continue
+        save_dicom_to_bitmap(dcm_fname, 0, vol_idx,target_bmp_dir)
+        ct_negative += 1
+
