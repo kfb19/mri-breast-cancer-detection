@@ -138,7 +138,7 @@ criterion = nn.CrossEntropyLoss()
 
 error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
 
-epochs = 1
+epochs = 5
 
 net_final = deepcopy(net)
 
