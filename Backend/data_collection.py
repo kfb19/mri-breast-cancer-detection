@@ -109,7 +109,7 @@ boxes, data = read_data(BOXES_PATH, MAPPING_PATH)
 # Image extraction.
 
 # Number of examples for each class.
-N_CLASS = 73760  # half of all need to work out how many for each classDELME
+N_CLASS = 5000  # CHANGEME
 # Counts of examples extracted from each class.
 NEG_EXTRACTED = 0
 POS_EXTRACTED = 0
@@ -133,7 +133,7 @@ for row_idx, row in tqdm(data.iterrows(), total=N_CLASS*2):
 
     # Get DICOM filename.
     DCM_FNAME = str(row['classic_path'])
-    dcm_fname = os.path.join(DATA_PATH, DCM_FNAME)
+    DCM_FNAME = os.path.join(DATA_PATH, DCM_FNAME)
 
     # code in here???? DELME for 3channels
 
