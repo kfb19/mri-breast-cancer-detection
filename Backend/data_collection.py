@@ -9,18 +9,19 @@ from skimage.io import imsave
 
 
 def read_data(boxes_path, mapping_path):
-    """ Reads the data in - WRITE BETTER DOCSTRING LATER """
+    """ WRITE A DOCSTRING HERE """
 
     # Reading the bounding boxes data.
-    boxes = pd.read_csv(boxes_path)
+    bounding_boxes = pd.read_csv(boxes_path)
 
     # Reading the mapping path data
     # Only consider fat-satured "pre" exams for the time being
-    data = pd.read_csv(mapping_path)
+    scan_data = pd.read_csv(mapping_path)
     # Each row refers to a different 2D slice of a 3D volume
     # #Pre = only fat saturated images
-    data = data[data['original_path_and_filename'].str.contains('pre')]
-    return boxes, data
+    scan_data = scan_data[scan_data['original_path_and_filename'].str.
+                          contains('pre')]
+    return bounding_boxes, scan_data
 
 
 def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
@@ -31,9 +32,9 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
     # Create a path to save the slice .bmp file in, according
     # to the original DICOM filename and target label
     bmp_path = dicom_filename.split('/')[-1].replace(
-       '.dcm', '-{}.bmp'.format(patient_index))
+       '.dcm', f'-{patient_index}.bmp')
     if label == 1:
-        cancer_status = 'pos' 
+        cancer_status = 'pos'
     else:
         cancer_status = 'neg'
     bmp_path = os.path.join(target_bmp_dir, cancer_status, bmp_path)
@@ -83,11 +84,11 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
     print("Image saved")
 
 
-# Setting file paths needed for using the data.
-DATA_PATH = 'E:\data\manifest-1675379375384'
-BOXES_PATH = 'E:\data\csvs\Annotation_Boxes.csv'
-MAPPING_PATH = 'E:\data\csvs\Breast-Cancer-MRI-filepath_filename-mapping.csv'
-TARGET_BMP_DIR = 'E:\data\output\\bmp_out'
+# Setting file paths needed for using the data (maybe don't keep/note).
+DATA_PATH = 'E:\\data\\manifest-1675379375384'
+BOXES_PATH = 'E:\\data\\csvs\\Annotation_Boxes.csv'
+MAPPING_PATH = 'E:\\data\\csvs\\Breast-Cancer-MRI-mapping.csv'
+TARGET_BMP_DIR = 'E:\\data\\output\\bmp_out'
 if not os.path.exists(TARGET_BMP_DIR):
     os.makedirs(TARGET_BMP_DIR)
 
