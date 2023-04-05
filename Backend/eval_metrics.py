@@ -1,0 +1,1 @@
+# do a class then each model has a class that can be compared maybe? then getter functions to calcualte the metrics for each class 
