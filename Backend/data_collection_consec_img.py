@@ -115,6 +115,8 @@ NEG_EXTRACTED = 0
 POS_EXTRACTED = 0
 
 # Initialise iteration index of each patient volume.
+IMG_TOTAL = 160  # How many images there are per volume.
+IMG_COUNT = 0  # How many images looked through.
 VOL_INDEX = -1
 for row_idx, row in tqdm(data.iterrows(), total=N_CLASS*2):
     # Indices start at 1 here.
@@ -129,7 +131,8 @@ for row_idx, row in tqdm(data.iterrows(), total=N_CLASS*2):
         start_slice = int(box_row['Start Slice'])
         end_slice = int(box_row['End Slice'])
         assert end_slice >= start_slice
-    vol_idx = new_vol_idx
+        IMG_COUNT = 0
+    VOL_INDEX = new_vol_idx
 
     # Get DICOM filename.
     DCM_FNAME = str(row['classic_path'])
@@ -137,17 +140,20 @@ for row_idx, row in tqdm(data.iterrows(), total=N_CLASS*2):
 
     # code in here???? DELME for 3channels
 
+    if IMG_COUNT < IMG_TOTAL:
+        print("Here")
+
     # Determine slice label:
     # If within 3D bounding box, save as positive.
     if slice_idx >= start_slice and slice_idx < end_slice:
         if POS_EXTRACTED >= N_CLASS:
             continue
-        save_dicom_to_bitmap(DCM_FNAME, 1, vol_idx, TARGET_BMP_DIR)
+        save_dicom_to_bitmap(DCM_FNAME, 1, VOL_INDEX, TARGET_BMP_DIR)
         POS_EXTRACTED += 1
 
     # If outside 3D box by more than 5 slices, save as negative.
     elif (slice_idx + 5) <= start_slice or (slice_idx - 5) > end_slice:
         if NEG_EXTRACTED >= N_CLASS:
             continue
-        save_dicom_to_bitmap(DCM_FNAME, 0, vol_idx, TARGET_BMP_DIR)
+        save_dicom_to_bitmap(DCM_FNAME, 0, VOL_INDEX, TARGET_BMP_DIR)
         NEG_EXTRACTED += 1
