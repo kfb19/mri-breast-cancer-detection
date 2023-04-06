@@ -32,18 +32,21 @@ class ScanDataset(Dataset):
 
     def create_labels(self):
         """ DOCSTRING HERE """
-        # create and store a label (positive/1 or negative/0 for each image)
+        # create and store label (positive/1 or negative/0 for each group of 3)
         # each label is the tuple: (img filename, label number (0 or 1))
         labels = []
-        print('building DBC dataset labels.')
+        print('Building dataset labels...')
         # iterate over each class
         for target, target_label in enumerate(['neg', 'pos']):
             case_dir = os.path.join(self.data_dir, target_label)
             # iterate over all images in the class/case type
-            for fname in os.listdir(case_dir):
-                if '.bmp' in fname:
-                    fpath = os.path.join(case_dir, fname)
-                    labels.append((fpath, target))
+            for folder in os.listdir(case_dir):
+                group = []
+                for fname in os.listdir(case_dir + "\\" + folder):
+                    if '.bmp' in fname:
+                        fpath = os.path.join(case_dir, folder, fname)
+                        group.append((fpath, target))
+                labels.append(group)
 
         self.labels = labels
 
@@ -63,24 +66,32 @@ class ScanDataset(Dataset):
         """ DOCSTRING HERE """
         # required method for accessing data samples
         # returns data with its label
-        fpath, target = self.labels[idx]
+        group = self.labels[idx]
+        # data = np.empty(3)
+        data = []
+        for counter in range(3):
+            fpath, target = group[counter]
 
-        # load img from file (bmp)
-        img_arr = imread(fpath, as_gray=True)
+            # load img from file (bmp)
+            img_arr = imread(fpath, as_gray=True)
 
-        # normalize image
-        img_arr = self.normalise(img_arr)
+            # normalize image
+            img_arr = self.normalise(img_arr)
 
-        # convert to tensor (PyTorch matrix)
-        data = torch.from_numpy(img_arr)
-        data = data.type(torch.FloatTensor)
+            # convert to tensor (PyTorch matrix)
+            single = torch.from_numpy(img_arr)
+            single = single.type(torch.FloatTensor)
 
-        # add image channel dimension (to work with neural network)
-        data = torch.unsqueeze(data, 0)
+            # add image channel dimension (to work with neural network)
+            single = torch.unsqueeze(single, 0)
 
-        # resize image
-        data = transforms.Resize((self.img_size, self.img_size))(data)
+            # resize image
+            single = transforms.Resize((self.img_size, self.img_size))(single)
 
+            data.append(torch.Tensor.numpy(single))
+
+        data = torch.tensor(data).permute(1, 0, 2, 3)
+        data = torch.squeeze(data).type(torch.FloatTensor)
         return data, target
 
     def __len__(self):
@@ -93,6 +104,7 @@ def main():
     """ DOCSTRING HERE """
     # directory where our .png data is (created in the previous post)
     data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
+    results_path = "E:\\data\\output\\results\\resnet50_consec"
     # change to read the above from the other file?
     # length in pixels of size of image once resized for the network
     img_size = 128
@@ -108,8 +120,8 @@ def main():
     num_train = int(train_fraction * dataset_size)
     num_validation = int(validation_fraction * dataset_size)
     num_test = int(test_fraction * dataset_size)
-    print(f"Training: {num_train}\nValidation: {num_validation}\nTesting: " +
-          "{num_test}")
+    print(f"Training: {num_train}\nValidation: {num_validation}" +
+          f"\nTesting: {num_test}")
 
     train_dataset, validation_dataset, test_dataset = \
         torch.utils.data.random_split(dataset,
@@ -152,7 +164,7 @@ def main():
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
     # learning rate??
 
-    epochs = 5
+    epochs = 3
 
     net_final = deepcopy(net)
 
@@ -162,6 +174,7 @@ def main():
     # for training visualization later
     train_accs = []
     val_accs = []
+    losses = []
 
     # training loop
     for epoch in range(epochs):
@@ -191,18 +204,19 @@ def main():
             # in other words,
             inputs = inputs.to(device)
             targets = targets.to(device)
-
             # reset changes (gradients) to parameters
             error_minimizer.zero_grad()
 
             # get the network's predictions on the training set batch
             net: Module = resnet50()
+            net.cuda()
             predictions = net(inputs)
 
             # evaluate the error, and estimate
             #   how much to change the network parameters
             loss = criterion(predictions, targets)
             loss.backward()
+            losses.append(loss)
 
             # change parameters
             error_minimizer.step()
@@ -237,6 +251,7 @@ def main():
                 inputs = inputs.to(device)
                 targets = targets.to(device)
                 net: Module = resnet50()
+                net.cuda()
                 predictions = net(inputs)
                 _, predicted_class = predictions.max(1)
                 total_val_examples += predicted_class.size(0)
@@ -255,26 +270,50 @@ def main():
             net_final = deepcopy(net)
 
     epochs_list = list(range(epochs))
+    save_file = "E:\\data\\output\\nets\\resnet50_consec.pth"
+    torch.save(net_final.state_dict(), save_file)
 
+    # pred acc over time
     plt.figure()
-    plt.plot(epochs_list, train_accs, 'b-', label='training set accuracy')
-    plt.plot(epochs_list, val_accs, 'r-', label='validation set accuracy')
-    plt.xlabel('epoch')
-    plt.ylabel('prediction accuracy')
+    plt.plot(epochs_list, train_accs, 'b-', label='Training Set Accuracy')
+    plt.plot(epochs_list, val_accs, 'r-', label='Validation Set Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Prediction Accuracy')
     plt.ylim(0.5, 1)
-    plt.title('Classifier training evolution:\nprediction accuracy over time')
+    plt.title('Classifier training evolution:\nPrediction Accuracy Over Time')
     plt.legend()
-    plt.show()
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+    graph_path = results_path + "\\pred_acc_over_time.png"
+    plt.savefig(graph_path)
+
+    # loss reduction
+    plt.figure()
+    plt.plot(epochs_list, losses, 'b-', label='Training loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss Reduction')
+    plt.ylim(0.5, 1)
+    plt.title('Classifier training evolution:\nLoss Reduction')
+    plt.legend()
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+    graph_path = results_path + "\\loss_reduction.png"
+    plt.savefig(graph_path)
 
     # helper function for plotting a batch of images
 
     def plot_imgbatch(imgs):
+        """ INSERT DOCSTRING """
         imgs = imgs.cpu()
         imgs = imgs.type(torch.IntTensor)
         plt.figure(figsize=(15, 3*(imgs.shape[0])))
         grid_img = make_grid(imgs, nrow=5)
         plt.imshow(grid_img.permute(1, 2, 0))
         plt.show()
+        if not os.path.exists(results_path):
+            os.makedirs(results_path)
+        graph_path = results_path + "\\img_batch.png"
+        plt.savefig(graph_path)
 
     total_test_examples = 0
     num_correct_test = 0
@@ -329,7 +368,7 @@ def main():
     # get total results
     # total prediction accuracy of network on test set
     file_name = "resnet50_iteration_1.txt"
-    folder = "resnet50"
+    folder = "resnet50_consec"
 
     evaluation = Evaluation(false_pos_count, false_neg_count,
                             true_pos_count, true_neg_count, file_name, folder)
@@ -344,6 +383,5 @@ def main():
     print(f"Specificity: {evaluation.specificity}")
 
 
-# AUC????
 if __name__ == "__main__":
     main()
