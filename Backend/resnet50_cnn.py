@@ -329,9 +329,10 @@ def main():
     # get total results
     # total prediction accuracy of network on test set
     file_name = "resnet50_iteration_1.txt"
+    folder = "resnet50"
 
     evaluation = Evaluation(false_pos_count, false_neg_count,
-                            true_pos_count, true_neg_count, file_name)
+                            true_pos_count, true_neg_count, file_name, folder)
     print(f"Test set accuracy: {evaluation.accuracy}")
     print(f"{true_pos_count} true positive classifications\n")
     print(f"{false_pos_count} false positive classifications\n")
@@ -343,5 +344,6 @@ def main():
     print(f"Specificity: {evaluation.specificity}")
 
 
+# AUC????
 if __name__ == "__main__":
     main()
