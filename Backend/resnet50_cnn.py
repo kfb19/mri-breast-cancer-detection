@@ -283,7 +283,7 @@ def main():
     false_pos_count = 0
     true_pos_count = 0
     false_neg_count = 0
-    true_neg_count = 0  # calc me properly
+    true_neg_count = 0
 
     # visualize a random batch of data with examples
     num_viz = 10
@@ -309,9 +309,13 @@ def main():
             confusion_vector = predicted_class / targets
             num_true_pos = torch.sum(confusion_vector == 1).item()
             num_false_pos = torch.sum(confusion_vector == float('inf')).item()
+            num_false_neg = torch.sum(torch.isnan(confusion_vector)).item()
+            num_true_neg = torch.sum(confusion_vector == 0).item()
 
             true_pos_count += num_true_pos
             false_pos_count += num_false_pos
+            false_neg_count += num_false_neg
+            true_neg_count += num_true_neg
 
             # plot predictions
             if batch_index == viz_index:
@@ -324,8 +328,10 @@ def main():
 
     # get total results
     # total prediction accuracy of network on test set
+    file_name = "resnet50_iteration_1.txt"
+
     evaluation = Evaluation(false_pos_count, false_neg_count,
-                            true_pos_count, true_neg_count)
+                            true_pos_count, true_neg_count, file_name)
     print(f"Test set accuracy: {evaluation.accuracy}")
     print(f"{true_pos_count} true positive classifications\n")
     print(f"{false_pos_count} false positive classifications\n")
@@ -335,7 +341,6 @@ def main():
     print(f"Positive predictive value: {evaluation.ppv}")
     print(f"Sensitivity: {evaluation.sensitivity}")
     print(f"Specificity: {evaluation.specificity}")
-    # write to fileee
 
 
 if __name__ == "__main__":

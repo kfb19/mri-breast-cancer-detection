@@ -41,7 +41,7 @@ class Evaluation():
         path = file_path + folder_name
         if not os.path.exists(path):
             os.makedirs(path)
-            
+
         path = path + "\\" + file_name
 
         if not os.path.exists(path):
@@ -58,6 +58,3 @@ class Evaluation():
             file.close()
         else:
             print("File already exists, need new file name.\n")
-
-
-new = Evaluation(1, 2, 3, 4, "test.txt")
