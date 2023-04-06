@@ -14,10 +14,11 @@ from torchvision.models import resnet50
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
+from eval_metrics import Evaluation
 
 
 # pylint: disable=E1101
-class DBCDataset(Dataset):
+class ScanDataset(Dataset):
     """ DOCSTRING HERE """
 
     def __init__(self, data_dir, img_size):
@@ -46,7 +47,7 @@ class DBCDataset(Dataset):
 
         self.labels = labels
 
-    def normalize(self, img):
+    def normalise(self, img):
         """ DOCSTRING HERE """
         # normalize image pixel values to range [0, 255]
         # img expected to be array
@@ -64,11 +65,11 @@ class DBCDataset(Dataset):
         # returns data with its label
         fpath, target = self.labels[idx]
 
-        # load img from file (png or jpg)
+        # load img from file (bmp)
         img_arr = imread(fpath, as_gray=True)
 
         # normalize image
-        img_arr = self.normalize(img_arr)
+        img_arr = self.normalise(img_arr)
 
         # convert to tensor (PyTorch matrix)
         data = torch.from_numpy(img_arr)
@@ -95,19 +96,20 @@ def main():
     # change to read the above from the other file?
     # length in pixels of size of image once resized for the network
     img_size = 128
-    dataset = DBCDataset(data_dir, img_size)
-    print(len(dataset))
+    dataset = ScanDataset(data_dir, img_size)
+    print(f"Dataset length {len(dataset)}")
 
     train_fraction = 0.8
     validation_fraction = 0.1
     test_fraction = 0.1
     dataset_size = len(dataset)
-    print(dataset_size)
+    print(f"Dataset size: {dataset_size}")
 
     num_train = int(train_fraction * dataset_size)
     num_validation = int(validation_fraction * dataset_size)
     num_test = int(test_fraction * dataset_size)
-    print(num_train, num_validation, num_test)
+    print(f"Training: {num_train}\nValidation: {num_validation}\nTesting: " +
+          "{num_test}")
 
     train_dataset, validation_dataset, test_dataset = \
         torch.utils.data.random_split(dataset,
@@ -131,7 +133,7 @@ def main():
     test_loader = DataLoader(test_dataset,
                              batch_size=eval_batchsize)
 
-    # set random seeds for reproducibility
+    # set random seeds for reproducibility CHECKME WHY?
     seed = 42
     random.seed(seed)
     torch.manual_seed(seed)
@@ -139,8 +141,8 @@ def main():
 
     net = resnet50()
 
-    # 1 channel input, not 3
-    net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
+    # 3 channel input
+    net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
                           stride=(2, 2), padding=(3, 3), bias=False)
 
     net = net.to(device)
@@ -148,6 +150,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
 
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
+    # learning rate??
 
     epochs = 5
 
@@ -279,6 +282,8 @@ def main():
     # true and false positive counts
     false_pos_count = 0
     true_pos_count = 0
+    false_neg_count = 0
+    true_neg_count = 0  # calc me properly
 
     # visualize a random batch of data with examples
     num_viz = 10
@@ -319,7 +324,19 @@ def main():
 
     # get total results
     # total prediction accuracy of network on test set
-    test_acc = num_correct_test / total_test_examples
-    print(f"Test set accuracy: {test_acc}")
+    evaluation = Evaluation(false_pos_count, false_neg_count,
+                            true_pos_count, true_neg_count)
+    print(f"Test set accuracy: {evaluation.accuracy}")
     print(f"{true_pos_count} true positive classifications\n")
-    print(f"{false_pos_count}false positive classifications\n")
+    print(f"{false_pos_count} false positive classifications\n")
+    print(f"{true_neg_count} true negative classifications\n")
+    print(f"{false_neg_count} false negative classifications\n")
+    print(f"Negative predictive value: {evaluation.npv}")
+    print(f"Positive predictive value: {evaluation.ppv}")
+    print(f"Sensitivity: {evaluation.sensitivity}")
+    print(f"Specificity: {evaluation.specificity}")
+    # write to fileee
+
+
+if __name__ == "__main__":
+    main()
