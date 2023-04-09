@@ -19,7 +19,7 @@ from torchvision.models import resnet50
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
-from eval_metrics import Evaluation
+from evaluation import Evaluation
 
 
 # pylint: disable=E1101
@@ -137,151 +137,185 @@ class ScanDataset(Dataset):
         return size
 
 
+def plot_imgbatch(imgs, results_path):
+    """ Helper function for plotting a batch of images.
+
+    Args:
+        imgs: the images to plot.
+    """
+    imgs = imgs.cpu()
+    imgs = imgs.type(torch.IntTensor)
+    plt.figure(figsize=(15, 3*(imgs.shape[0])))
+    grid_img = make_grid(imgs, nrow=5)
+    plt.imshow(grid_img.permute(1, 2, 0))
+    plt.show()
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+    graph_path = os.path.join(results_path, "img_batch.png")
+    plt.savefig(graph_path)
+
+
 def main():
-    """ DOCSTRING HERE """
-    # directory where our .png data is (created in the previous post)
+    """ Runs the bulk of the CNN code.
+        Implements ResNet50 with three-channel input
+        for consecutive scans.
+        """
+
+    # Directory where data is stored.
     data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
     results_path = "E:\\data\\output\\results\\resnet50_consec"
-    # change to read the above from the other file?
-    # length in pixels of size of image once resized for the network
+
+    # Length in pixels of size of image once resized for the network.
     img_size = 128
     dataset = ScanDataset(data_dir, img_size)
-    print(f"Dataset length {len(dataset)}")
 
+    # Fractions for splitting data into train/validation/test.
+    # An 80/10/10 split has been chosen.
     train_fraction = 0.8
     validation_fraction = 0.1
     test_fraction = 0.1
     dataset_size = len(dataset)
-    print(f"Dataset size: {dataset_size}")
+    print(f"Dataset size: {dataset_size}\n")
 
+    # Splits the data into the chosen fractions.
     num_train = int(train_fraction * dataset_size)
     num_validation = int(validation_fraction * dataset_size)
     num_test = int(test_fraction * dataset_size)
     print(f"Training: {num_train}\nValidation: {num_validation}" +
-          f"\nTesting: {num_test}")
+          f"\nTesting: {num_test}\n")
 
+    # Sets up the datasets with a random split.
     train_dataset, validation_dataset, test_dataset = \
         torch.utils.data.random_split(dataset,
                                       [num_train, num_validation, num_test])
 
-    # GPUs
+    # Makes sure CNN training runs on GPU, if available.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"running on {device}")
+    print(f"Running on {device}\n")
 
-    train_batchsize = 16  # depends on your computation hardware
-    eval_batchsize = 8  # can be small due to small dataset size
+    # Defines batch sizes.
+    train_batchsize = 16  # Depends on computation hardware.
+    eval_batchsize = 8  # Can be small due to small dataset size.
+
+    # Loads images for training in a random order.
     train_loader = DataLoader(train_dataset,
                               batch_size=train_batchsize,
-                              shuffle=True
-                              # images are loaded in random order
-                              )
+                              shuffle=True)
 
+    # Loads images for validation in a random order.
     validation_loader = DataLoader(validation_dataset,
                                    batch_size=eval_batchsize)
 
+    # Loads images for testing in a random order.
     test_loader = DataLoader(test_dataset,
                              batch_size=eval_batchsize)
 
-    # set random seeds for reproducibility CHECKME WHY?
+    # Set random seeds for reproducibility.
     seed = 42
     random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
+    # Define the convoluted neural network.
     net = resnet50()
 
-    # 3 channel input
+    # This network takes 3 channel input.
     net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
                           stride=(2, 2), padding=(3, 3), bias=False)
 
+    # Casts CNN to run on device.
     net = net.to(device)
 
+    # Defines criterion to compute the cross-entropy loss.
     criterion = nn.CrossEntropyLoss()
 
+    # Sets the error minimiser with a learning rate of 0.001.
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
-    # learning rate??
 
+    # Defines epoch number.
     epochs = 3
 
+    # Defines the "final" version of the net to save (updated later).
     net_final = deepcopy(net)
 
+    # Used to pick the best-performing model on the validation set.
     best_validation_accuracy = 0.
-    # used to pick the best-performing model on the validation set
 
-    # for training visualization later
+    # For training visualiSation later.
     train_accs = []
     val_accs = []
     losses = []
 
-    # training loop
+    # Training loop.
     for epoch in range(epochs):
-        # set network to training mode, so that its parameters can be changed
+        # Set network to training mode, so its parameters can be changed.
         net.train()
 
-        # print training info
+        # Print training info.
         print(f"### Epoch {epoch}:")
 
-        # statistics needed to compute classification accuracy:
-        # the total number of image examples trained on
+        # Statistics needed to compute classification accuracy:
+        # The total number of image examples trained on.
         total_train_examples = 0
 
-        # the number of examples classified correctly
+        # The number of examples classified correctly.
         num_correct_train = 0
 
-        # iterate over the training set once
+        # Iterate over the training set once.
         for batch_index, (inputs, targets) in tqdm(enumerate(train_loader),
                                                    total=len(train_dataset) //
                                                    train_batchsize):
-            # load the data onto the computation device.
-            # inputs are a tensor of shape:
+            # Load the data onto the computation device.
+            # Inputs are a Tensor of shape:
             # (batch size, number of channels, image height, image width).
-            # targets are a tensor of one-hot-encoded class
+            # Targets are a Tensor of one-hot-encoded class
             # labels for the inputs,
-            # of shape (batch size, number of classes)
-            # in other words,
+            # of shape (batch size, number of classes).
             inputs = inputs.to(device)
             targets = targets.to(device)
-            # reset changes (gradients) to parameters
+
+            # Reset changes (gradients) to parameters.
             error_minimizer.zero_grad()
 
-            # get the network's predictions on the training set batch
+            # Get the network's predictions on the training set batch.
             net: Module = resnet50()
             net.cuda()
             predictions = net(inputs)
 
-            # evaluate the error, and estimate
-            #   how much to change the network parameters
+            # Evaluate the error.
+            # Estimate how much to change the network parameters.
             loss = criterion(predictions, targets)
             loss.backward()
             losses.append(loss)
 
-            # change parameters
+            # Change parameters.
             error_minimizer.step()
 
-            # calculate predicted class label
-            # the .max() method returns the maximum entries, and their indices;
-            # we just need the index with the highest probability,
-            #   not the probability itself.
+            # Calculate predicted class label.
+            # The .max() method returns the maximum entries, and their indices.
+            # Need the index with the highest probability.
+            # Not the probability itself.
             _, predicted_class = predictions.max(1)
             total_train_examples += predicted_class.size(0)
             num_correct_train += predicted_class.eq(targets).sum().item()
 
-        # get results
-        # total prediction accuracy of network on training set
+        # Get results:
+        # Total prediction accuracy of network on training set.
         train_acc = num_correct_train / total_train_examples
         print(f"Training accuracy: {train_acc}")
         train_accs.append(train_acc)
 
-        # predict on validation set (similar to training set):
+        # Predict on validation set (similar to training set):
         total_val_examples = 0
         num_correct_val = 0
 
-        # switch network from training mode (parameters can be trained)
-        #   to evaluation mode (parameters can't be trained)
+        # Switch network from training mode (parameters can be trained),
+        # to evaluation mode (parameters can't be trained).
         net.eval()
 
-        with torch.no_grad():  # don't save parameter changes
-            #                      since this is not for training
+        with torch.no_grad():
+            # Don't save parameter changes,
+            # since this is not for training.
             for batch_index, (inputs, targets) in \
                 tqdm(enumerate(validation_loader),
                      total=len(validation_dataset)//eval_batchsize):
@@ -294,23 +328,24 @@ def main():
                 total_val_examples += predicted_class.size(0)
                 num_correct_val += predicted_class.eq(targets).sum().item()
 
-        # get results
-        # total prediction accuracy of network on validation set
+        # Get results:
+        # Total prediction accuracy of network on validation set.
         val_acc = num_correct_val / total_val_examples
         print(f"Validation accuracy: {val_acc}")
         val_accs.append(val_acc)
 
-        # Finally, save model if the validation accuracy is the best so far
+        # Finally, save model if the validation accuracy is the best so far.
         if val_acc > best_validation_accuracy:
             best_validation_accuracy = val_acc
             print("Validation accuracy improved; saving model.")
             net_final = deepcopy(net)
 
+    # Save final CNN in the specified filepath.
     epochs_list = list(range(epochs))
     save_file = "E:\\data\\output\\nets\\resnet50_consec.pth"
     torch.save(net_final.state_dict(), save_file)
 
-    # pred acc over time
+    # Plot prediction accuracy over time.
     plt.figure()
     plt.plot(epochs_list, train_accs, 'b-', label='Training Set Accuracy')
     plt.plot(epochs_list, val_accs, 'r-', label='Validation Set Accuracy')
@@ -321,10 +356,10 @@ def main():
     plt.legend()
     if not os.path.exists(results_path):
         os.makedirs(results_path)
-    graph_path = results_path + "\\pred_acc_over_time.png"
+    graph_path = os.path.join(results_path, "pred_acc_over_time.png")
     plt.savefig(graph_path)
 
-    # loss reduction
+    # Plot loss reduction.
     plt.figure()
     plt.plot(epochs_list, losses, 'b-', label='Training loss')
     plt.xlabel('Epoch')
@@ -334,54 +369,40 @@ def main():
     plt.legend()
     if not os.path.exists(results_path):
         os.makedirs(results_path)
-    graph_path = results_path + "\\loss_reduction.png"
+    graph_path = os.path.join(results_path, "loss_reduction.png")
     plt.savefig(graph_path)
 
-    # helper function for plotting a batch of images
-
-    def plot_imgbatch(imgs):
-        """ INSERT DOCSTRING """
-        imgs = imgs.cpu()
-        imgs = imgs.type(torch.IntTensor)
-        plt.figure(figsize=(15, 3*(imgs.shape[0])))
-        grid_img = make_grid(imgs, nrow=5)
-        plt.imshow(grid_img.permute(1, 2, 0))
-        plt.show()
-        if not os.path.exists(results_path):
-            os.makedirs(results_path)
-        graph_path = results_path + "\\img_batch.png"
-        plt.savefig(graph_path)
-
+    # Define some requirec counts.
     total_test_examples = 0
     num_correct_test = 0
 
-    # true and false positive counts
+    # True and false positive counts.
     false_pos_count = 0
     true_pos_count = 0
     false_neg_count = 0
     true_neg_count = 0
 
-    # visualize a random batch of data with examples
+    # Visualize a random batch of data with examples.
     num_viz = 10
     viz_index = random.randint(0, len(test_dataset)//eval_batchsize)
 
-    # see how well the final trained model does on the test set
+    # See how well the final trained model does on the test set.
     with torch.no_grad():
-        # don't save parameter gradients/changes since this is
-        # not for model training
+        # Don't save parameter gradients/changes,
+        # since this is not for model training.
         for batch_index, (inputs, targets) in enumerate(test_loader):
-            # make predictions
+            # Make predictions.
             inputs = inputs.to(device)
             targets = targets.to(device)
             predictions = net_final(inputs)
 
-            # compute prediction statistics
+            # Compute prediction statistics.
             _, predicted_class = predictions.max(1)
             total_test_examples += predicted_class.size(0)
             num_correct_test += predicted_class.eq(targets).sum().item()
 
-            # thanks to
-            #   https://gist.github.com/the-bass/cae9f3976866776dea17a5049013258d
+            # Thanks to:
+            # https://gist.github.com/the-bass/cae9f3976866776dea17a5049013258d
             confusion_vector = predicted_class / targets
             num_true_pos = torch.sum(confusion_vector == 1).item()
             num_false_pos = torch.sum(confusion_vector == float('inf')).item()
@@ -393,22 +414,24 @@ def main():
             false_neg_count += num_false_neg
             true_neg_count += num_true_neg
 
-            # plot predictions
+            # Plot predictions.
             if batch_index == viz_index:
                 print('Example Images:')
-                plot_imgbatch(inputs[:num_viz])
+                plot_imgbatch(inputs[:num_viz], results_path)
                 print('Target labels:')
                 print(targets[:num_viz].tolist())
                 print('Classifier predictions:')
                 print(predicted_class[:num_viz].tolist())
 
-    # get total results
-    # total prediction accuracy of network on test set
+    # Get total results:
+    # Total prediction accuracy of network on test set.
     file_name = "resnet50_iteration_1.txt"
-    folder = "resnet50_consec"
+    folder = "resnet50_single"
 
+    # Calulcate and save evaluation metrics using the Evaluation module.
     evaluation = Evaluation(false_pos_count, false_neg_count,
                             true_pos_count, true_neg_count, file_name, folder)
+    # Print the results to the screen.
     print(f"Test set accuracy: {evaluation.accuracy}")
     print(f"{true_pos_count} true positive classifications\n")
     print(f"{false_pos_count} false positive classifications\n")
