@@ -131,8 +131,8 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"running on {device}")
 
-    train_batchsize = 8  # depends on your computation hardware
-    eval_batchsize = 4  # can be small due to small dataset size
+    train_batchsize = 16  # depends on your computation hardware
+    eval_batchsize = 8  # can be small due to small dataset size
     train_loader = DataLoader(train_dataset,
                               batch_size=train_batchsize,
                               shuffle=True
