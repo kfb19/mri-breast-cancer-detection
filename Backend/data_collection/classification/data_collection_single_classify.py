@@ -12,7 +12,7 @@ from skimage.io import imsave
 
 
 def read_data(boxes_path, mapping_path):
-    """Reads the bounding boxes and mapping data to be stored in a 2D array.
+    """ Reads the bounding boxes and mapping data to be stored in a 2D array.
 
     Args:
         boxes_path: the bounding boxes storage path
@@ -34,7 +34,7 @@ def read_data(boxes_path, mapping_path):
 
 
 def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
-    """Saves the dicom images in a bitmap file format.
+    """ Saves the dicom images in a bitmap file format.
 
     Args:
         dicom_filename: the file name for the dicom image
@@ -70,7 +70,7 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
             dicom_filename_end = dicom_filename_split[-1]
             assert dicom_filename_end.split('-')[1][0] == '0'
 
-            #  Dicom filename end split.
+            # Dicom filename end split.
             dicom_filename_e_split = dicom_filename_end.split('-')
             dicom_filename_end = '-'.join([dicom_filename_e_split[0],
                                            dicom_filename_e_split[1][1:]])

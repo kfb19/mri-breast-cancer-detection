@@ -1,4 +1,9 @@
-""" DOCSTRING HERE """
+""" This module implements ResNet50 with 3 channel
+inputs with consecutive scan slices. It trains,
+validates and tests a ResNet50 classification CNN
+on Breast Cancer MRI scan thruples, then calculates
+results for performance.
+"""
 
 import random
 import os
@@ -19,10 +24,18 @@ from eval_metrics import Evaluation
 
 # pylint: disable=E1101
 class ScanDataset(Dataset):
-    """ DOCSTRING HERE """
+    """ This class creates a dataset of images
+    from which to train, test and validate the
+    Resnet50 CNN.
+    """
 
     def __init__(self, data_dir, img_size):
-        """ DOCSTRING HERE """
+        """ Initialises the dataset of scans.
+
+        Args:
+            data_dir: the directory of the data
+            img_size: the size of the images needed for CNN input
+        """
         self.data_dir = data_dir
         self.img_size = img_size
 
@@ -31,15 +44,23 @@ class ScanDataset(Dataset):
         self.create_labels()
 
     def create_labels(self):
-        """ DOCSTRING HERE """
-        # create and store label (positive/1 or negative/0 for each group of 3)
-        # each label is the tuple: (img filename, label number (0 or 1))
+        """ Creates and stores labels (positive/1 or negative/0)
+        for scans within the dataset. Each label is a tuple:
+        (img folder, label number (0 or 1)), where the folder
+        contains the 3 consecutive scans.
+
+        Args:
+            data_dir: the directory of the data
+            img_size: the size of the images needed for CNN input
+        """
+
         labels = []
         print('Building dataset labels...')
-        # iterate over each class
+
+        # Iterate over each class.
         for target, target_label in enumerate(['neg', 'pos']):
             case_dir = os.path.join(self.data_dir, target_label)
-            # iterate over all images in the class/case type
+            # Iterate over all images in the class/case type.
             for folder in os.listdir(case_dir):
                 group = []
                 for fname in os.listdir(case_dir + "\\" + folder):
@@ -51,53 +72,69 @@ class ScanDataset(Dataset):
         self.labels = labels
 
     def normalise(self, img):
-        """ DOCSTRING HERE """
-        # normalize image pixel values to range [0, 255]
-        # img expected to be array
+        """ Normalises image pixel values to range [0, 255].
 
-        # convert uint16 -> float
+        Args:
+            img: the array for each image/scan.
+        Returns:
+            img: the edited array for each image/scan.
+        """
+
+        # Convert uint16 -> float.
         img = img.astype(float) * 255. / img.max()
-        # convert float -> unit8
+        # Convert float -> unit8.
         img = img.astype(np.uint8)
 
         return img
 
     def __getitem__(self, idx):
-        """ DOCSTRING HERE """
-        # required method for accessing data samples
-        # returns data with its label
+        """ Required method for accessing data samples.
+
+        Args:
+            idx: the index of the data to be accessed.
+        Returns:
+            data: the data sample as a PyTorch Tensor.
+            target: the target classification/labels for that data.
+        """
+
         group = self.labels[idx]
-        # data = np.empty(3)
         data = []
+        # Loop to work with 3 channels.
         for counter in range(3):
             fpath, target = group[counter]
 
-            # load img from file (bmp)
+            # Load img from file (bmp).
             img_arr = imread(fpath, as_gray=True)
 
-            # normalize image
+            # Normalise image.
             img_arr = self.normalise(img_arr)
 
-            # convert to tensor (PyTorch matrix)
+            # Convert to Tensor (PyTorch matrix).
             single = torch.from_numpy(img_arr)
             single = single.type(torch.FloatTensor)
 
-            # add image channel dimension (to work with neural network)
+            # Add image channel dimension (to work with the CNN).
             single = torch.unsqueeze(single, 0)
 
-            # resize image
+            # Resize image.
             single = transforms.Resize((self.img_size, self.img_size))(single)
 
             data.append(torch.Tensor.numpy(single))
 
+        # Put 3 consecutive scans in the 3 channel inputs.
         data = torch.tensor(data).permute(1, 0, 2, 3)
         data = torch.squeeze(data).type(torch.FloatTensor)
+
         return data, target
 
     def __len__(self):
-        """ DOCSTRING HERE """
-        # required method for getting size of dataset
-        return len(self.labels)
+        """ Required method for getting the dataset size.
+
+        Returns:
+            size: the length of the dataset.
+        """
+        size = len(self.labels)
+        return size
 
 
 def main():
