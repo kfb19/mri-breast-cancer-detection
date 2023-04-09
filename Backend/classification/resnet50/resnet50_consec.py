@@ -278,6 +278,7 @@ def main():
             error_minimizer.zero_grad()
 
             # Get the network's predictions on the training set batch.
+            net.cuda()
             predictions = net(inputs)
 
             # Evaluate the error.
@@ -285,6 +286,8 @@ def main():
             loss = criterion(predictions, targets)
             loss.backward()
             losses.append(loss)
+            # Free memory to avoid overload.
+            del loss
 
             # Change parameters.
             error_minimizer.step()
@@ -319,6 +322,7 @@ def main():
                      total=len(validation_dataset)//eval_batchsize):
                 inputs = inputs.to(device)
                 targets = targets.to(device)
+                net.cuda()
                 predictions = net(inputs)
                 _, predicted_class = predictions.max(1)
                 total_val_examples += predicted_class.size(0)

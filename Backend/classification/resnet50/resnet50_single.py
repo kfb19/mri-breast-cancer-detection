@@ -270,6 +270,8 @@ def main():
             loss = criterion(predictions, targets)
             loss.backward()
             losses.append(loss)
+            # Free memory to avoid overload.
+            del loss
 
             # Change parameters.
             error_minimizer.step()
