@@ -212,6 +212,7 @@ def main():
 
     # Defines criterion to compute the cross-entropy loss.
     criterion = nn.CrossEntropyLoss()
+    criterion = criterion.to(device)
 
     # Sets the error minimiser with a learning rate of 0.001.
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
@@ -262,12 +263,13 @@ def main():
             error_minimizer.zero_grad()
 
             # Get the network's predictions on the training set batch.
-            net.cuda()
+            net = net.to(device)
             predictions = net(inputs)
 
             # Evaluate the error.
             # Estimate how much to change the network parameters.
             loss = criterion(predictions, targets)
+            loss = loss.to(device)
             loss.backward()
             losses.append(loss)
             # Free memory to avoid overload.
@@ -305,7 +307,7 @@ def main():
                 tqdm(enumerate(validation_loader),
                      total=len(validation_dataset)//eval_batchsize):
                 inputs = inputs.to(device)
-                net.cuda()
+                net = net.to(device)
                 targets = targets.to(device)
                 predictions = net(inputs)
                 _, predicted_class = predictions.max(1)

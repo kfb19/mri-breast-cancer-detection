@@ -192,7 +192,7 @@ def main():
     # Makes sure CNN training runs on GPU, if available.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running on {device}\n")
-
+    
     # Defines batch sizes.
     train_batchsize = 16  # Depends on computation hardware.
     eval_batchsize = 8  # Can be small due to small dataset size.
@@ -228,6 +228,7 @@ def main():
 
     # Defines criterion to compute the cross-entropy loss.
     criterion = nn.CrossEntropyLoss()
+    criterion = criterion.to(device)
 
     # Sets the error minimiser with a learning rate of 0.001.
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
@@ -278,7 +279,7 @@ def main():
             error_minimizer.zero_grad()
 
             # Get the network's predictions on the training set batch.
-            net.cuda()
+            net = net.to(device)
             predictions = net(inputs)
 
             # Evaluate the error.
@@ -322,7 +323,7 @@ def main():
                      total=len(validation_dataset)//eval_batchsize):
                 inputs = inputs.to(device)
                 targets = targets.to(device)
-                net.cuda()
+                net = net.to(device)
                 predictions = net(inputs)
                 _, predicted_class = predictions.max(1)
                 total_val_examples += predicted_class.size(0)
