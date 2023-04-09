@@ -128,7 +128,7 @@ def determine_pos_neg(slice_indexes, start, end):
 
 
 def main():
-    """Main function to run code to collect data for
+    """ Main function to run code to collect data for
     consecutive 3 channel images.
     """
     # Setting file paths needed for using the data.
@@ -180,6 +180,7 @@ def main():
         array_of_three.append(dcm_fname)
         slice_indexes.append(slice_idx)
 
+        # Determine label of group of three.
         if img_count % 3 == 0:
             triple_count += 1
 
