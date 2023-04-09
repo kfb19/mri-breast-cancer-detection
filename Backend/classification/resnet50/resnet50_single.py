@@ -12,7 +12,6 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from torch import nn
-from torch.nn import Module
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.models import resnet50
@@ -23,6 +22,7 @@ from evaluation import Evaluation
 
 
 # pylint: disable=E1101
+# pylint: disable=E1102
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
@@ -262,7 +262,6 @@ def main():
             error_minimizer.zero_grad()
 
             # Get the network's predictions on the training set batch.
-            net: Module = resnet50()
             net.cuda()
             predictions = net(inputs)
 
@@ -304,9 +303,8 @@ def main():
                 tqdm(enumerate(validation_loader),
                      total=len(validation_dataset)//eval_batchsize):
                 inputs = inputs.to(device)
-                targets = targets.to(device)
-                net: Module = resnet50()
                 net.cuda()
+                targets = targets.to(device)
                 predictions = net(inputs)
                 _, predicted_class = predictions.max(1)
                 total_val_examples += predicted_class.size(0)
