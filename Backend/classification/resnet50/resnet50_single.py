@@ -203,7 +203,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = resnet50()
+    net = resnet50(pretrained=False)
 
     # This network takes single channel input.
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
@@ -359,7 +359,7 @@ def main():
 
     # Plot loss reduction.
     plt.figure()
-    plt.plot(epochs_list, losses, 'b-', label='Training loss')
+    plt.plot(epochs_list, losses, 'b-', label='Training Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss Reduction')
     plt.ylim(0.5, 1)
@@ -424,7 +424,7 @@ def main():
 
     # Get total results:
     # Total prediction accuracy of network on test set.
-    file_name = "resnet50_iteration_1.txt"
+    file_name = "resnet50.txt"
     folder = "resnet50_single"
 
     # Calulcate and save evaluation metrics using the Evaluation module.
@@ -432,10 +432,10 @@ def main():
                             true_pos_count, true_neg_count, file_name, folder)
     # Print the results to the screen.
     print(f"Test set accuracy: {evaluation.accuracy}")
-    print(f"{true_pos_count} true positive classifications\n")
-    print(f"{false_pos_count} false positive classifications\n")
-    print(f"{true_neg_count} true negative classifications\n")
-    print(f"{false_neg_count} false negative classifications\n")
+    print(f"True positive classifications: {evaluation.true_p}")
+    print(f"False positive classifications: {evaluation.false_p}")
+    print(f"True negative classifications: {evaluation.true_n}")
+    print(f"False negative classifications: {evaluation.false_n}")
     print(f"Negative predictive value: {evaluation.npv}")
     print(f"Positive predictive value: {evaluation.ppv}")
     print(f"Sensitivity: {evaluation.sensitivity}")

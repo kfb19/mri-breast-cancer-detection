@@ -116,11 +116,11 @@ class Evaluation():
         # Writes metrics to file, providing it doesn't already exist.
         if not os.path.exists(file_path):
             with open(file_path, "w", encoding="utf-8") as file:
-                file.write(f"Test set accuracy: {self.accuracy}")
-                file.write(f"{true_p} true positive classifications\n")
-                file.write(f"{false_p} false positive classifications\n")
-                file.write(f"{true_n} true negative classifications\n")
-                file.write(f"{false_n} false negative classifications\n")
+                file.write(f"Test set accuracy: {self.accuracy}\n")
+                file.write(f"True positive classifications: {true_p}\n")
+                file.write(f"False positive classifications: {false_p}\n")
+                file.write(f"True negative classifications: {true_n}\n")
+                file.write(f"False negative classifications: {false_n}\n")
                 file.write(f"Negative predictive value: {self.npv}\n")
                 file.write(f"Positive predictive value: {self.ppv}\n")
                 file.write(f"Sensitivity: {self.sensitivity}\n")
