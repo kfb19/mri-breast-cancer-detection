@@ -192,7 +192,7 @@ def main():
     # Makes sure CNN training runs on GPU, if available.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running on {device}\n")
-    
+
     # Defines batch sizes.
     train_batchsize = 16  # Depends on computation hardware.
     eval_batchsize = 8  # Can be small due to small dataset size.
@@ -341,10 +341,10 @@ def main():
             print("Validation accuracy improved; saving model.")
             net_final = deepcopy(net)
 
-    # Save final CNN in the specified filepath.
-    epochs_list = list(range(epochs))
-    save_file = "E:\\data\\output\\nets\\resnet50_consec.pth"
-    torch.save(net_final.state_dict(), save_file)
+            # Save final CNN in the specified filepath.
+            epochs_list = list(range(epochs))
+            save_file = "E:\\data\\output\\nets\\resnet50_consec.pth"
+            torch.save(net_final.state_dict(), save_file)
 
     # Plot prediction accuracy over time.
     plt.figure()
@@ -359,6 +359,7 @@ def main():
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "pred_acc_over_time.png")
     plt.savefig(graph_path)
+    plt.clf()
 
     # Plot loss reduction.
     plt.figure()
@@ -372,6 +373,7 @@ def main():
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "loss_reduction.png")
     plt.savefig(graph_path)
+    plt.clf()
 
     # Define some requirec counts.
     total_test_examples = 0

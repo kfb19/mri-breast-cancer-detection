@@ -218,7 +218,7 @@ def main():
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
 
     # Defines epoch number.
-    epochs = 3
+    epochs = 2
 
     # Defines the "final" version of the net to save (updated later).
     net_final = deepcopy(net)
@@ -326,10 +326,10 @@ def main():
             print("Validation accuracy improved; saving model.")
             net_final = deepcopy(net)
 
-    # Save final CNN in the specified filepath.
-    epochs_list = list(range(epochs))
-    save_file = "E:\\data\\output\\nets\\resnet50_single.pth"
-    torch.save(net_final.state_dict(), save_file)
+            # Save final CNN in the specified filepath.
+            epochs_list = list(range(epochs))
+            save_file = "E:\\data\\output\\nets\\resnet50_single.pth"
+            torch.save(net_final.state_dict(), save_file)
 
     # Plot prediction accuracy over time.
     plt.figure()
@@ -344,6 +344,7 @@ def main():
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "pred_acc_over_time.png")
     plt.savefig(graph_path)
+    plt.clf()
 
     # Plot loss reduction.
     plt.figure()
@@ -351,12 +352,13 @@ def main():
     plt.xlabel('Epoch')
     plt.ylabel('Loss Reduction')
     plt.ylim(0.5, 1)
-    plt.title('Classifier training evolution:\nLoss Reduction')
+    plt.title('Classifier Training Evolution:\nLoss Reduction')
     plt.legend()
     if not os.path.exists(results_path):
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "loss_reduction.png")
     plt.savefig(graph_path)
+    plt.clf()
 
     # Define some requirec counts.
     total_test_examples = 0
