@@ -101,7 +101,7 @@ class ScanDataset(Dataset):
         img_arr = self.normalize(img_arr)
 
         # Convert to Tensor (PyTorch matrix).
-        data = torch.from_numpy(img_arr)
+        data = torch.from_numpy(img_arr).cuda()
         data = data.type(torch.FloatTensor)
 
         # Add image channel dimension (to work with the CNN).
@@ -133,11 +133,11 @@ def plot_imgbatch(imgs, results_path):
     plt.figure(figsize=(15, 3*(imgs.shape[0])))
     grid_img = make_grid(imgs, nrow=5)
     plt.imshow(grid_img.permute(1, 2, 0))
-    plt.show()
     if not os.path.exists(results_path):
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "img_batch.png")
     plt.savefig(graph_path)
+    plt.close()
 
 
 def main():
@@ -174,11 +174,13 @@ def main():
                                       [num_train, num_validation, num_test])
 
     # Makes sure CNN training runs on GPU, if available.
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda") if torch.cuda.is_available() \
+        else torch.device("cpu")
     print(f"Running on {device}\n")
 
     # Defines batch sizes.
-    train_batchsize = 160  # Depends on computation hardware.
+    train_batchsize = 32  # Depends on computation hardware.
     eval_batchsize = 16  # Can be small due to small dataset size.
 
     # Loads images for training in a random order.
@@ -347,13 +349,13 @@ def main():
     plt.xlabel('Epoch')
     plt.ylabel('Prediction Accuracy')
     plt.ylim(0.5, 1)
-    plt.title('Classifier training evolution:\nPrediction Accuracy Over Time')
+    plt.title('Classifier Training Evolution:\nPrediction Accuracy Over Time')
     plt.legend()
     if not os.path.exists(results_path):
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "pred_acc_over_time.png")
     plt.savefig(graph_path)
-    plt.clf()
+    plt.close()
 
     # Plot loss reduction.
     plt.figure()
@@ -367,7 +369,7 @@ def main():
         os.makedirs(results_path)
     graph_path = os.path.join(results_path, "loss_reduction.png")
     plt.savefig(graph_path)
-    plt.clf()
+    plt.close()
 
     # Define some requirec counts.
     total_test_examples = 0
