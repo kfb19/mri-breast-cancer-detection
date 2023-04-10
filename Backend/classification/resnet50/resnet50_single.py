@@ -246,6 +246,10 @@ def main():
         # The number of examples classified correctly.
         num_correct_train = 0
 
+        # Set variables needed for loss calculations.
+        loss_total = 0
+        counter = 0
+
         # Iterate over the training set once.
         for batch_index, (inputs, targets) in tqdm(enumerate(train_loader),
                                                    total=len(train_dataset) //
@@ -271,7 +275,8 @@ def main():
             loss = criterion(predictions, targets)
             loss = loss.to(device)
             loss.backward()
-            losses.append(loss.item())
+            loss_total = loss_total + loss.item()
+            counter = counter + 1
             # Free memory to avoid overload.
             del loss
 
@@ -287,6 +292,10 @@ def main():
             num_correct_train += predicted_class.eq(targets).sum().item()
 
         # Get results:
+        # Loss:
+        average_loss = loss_total / counter
+        losses.append(average_loss)
+
         # Total prediction accuracy of network on training set.
         train_acc = num_correct_train / total_train_examples
         print(f"Training accuracy: {train_acc}")
