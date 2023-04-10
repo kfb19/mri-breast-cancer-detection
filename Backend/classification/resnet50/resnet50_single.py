@@ -178,8 +178,8 @@ def main():
     print(f"Running on {device}\n")
 
     # Defines batch sizes.
-    train_batchsize = 16  # Depends on computation hardware.
-    eval_batchsize = 8  # Can be small due to small dataset size.
+    train_batchsize = 160  # Depends on computation hardware.
+    eval_batchsize = 16  # Can be small due to small dataset size.
 
     # Loads images for training in a random order.
     train_loader = DataLoader(train_dataset,
@@ -271,7 +271,7 @@ def main():
             loss = criterion(predictions, targets)
             loss = loss.to(device)
             loss.backward()
-            losses.append(loss)
+            losses.append(loss.item())
             # Free memory to avoid overload.
             del loss
 
