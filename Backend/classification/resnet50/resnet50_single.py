@@ -39,7 +39,7 @@ class ScanDataset(Dataset):
         self.data_dir = data_dir
         self.img_size = img_size
 
-        # assign labels to data within this Dataset
+        # Assign labels to data within this Dataset.
         self.labels = None
         self.create_labels()
 
