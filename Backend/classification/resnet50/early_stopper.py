@@ -16,7 +16,8 @@ class EarlyStopper:
             as improvement
             counter: the number of epochs with no improvement in
             validation loss
-            min_validation_loss: the best validation loss seen so far"""
+            min_validation_loss: the best validation loss seen so far
+    """
 
     def __init__(self, patience=1, min_delta=0):
         """ Initalises a member of the EarlyStopper
