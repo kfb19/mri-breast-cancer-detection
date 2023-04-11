@@ -12,7 +12,7 @@ from skimage.io import imsave
 
 
 def read_data(boxes_path, mapping_path):
-    """Reads the bounding boxes and mapping data to be stored in a 2D array.
+    """ Reads the bounding boxes and mapping data to be stored in a 2D array.
 
     Args:
         boxes_path: the bounding boxes storage path
@@ -35,7 +35,7 @@ def read_data(boxes_path, mapping_path):
 
 def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
                          triple_count):
-    """Saves the dicom images in a bitmap file format.
+    """ Saves the dicom images in a bitmap file format.
 
     Args:
         array_of_three: the name of the dicom files in an array
@@ -79,7 +79,7 @@ def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
                 dicom_filename_end = dicom_filename_split[-1]
                 assert dicom_filename_end.split('-')[1][0] == '0'
 
-                #  Dicom filename end split.
+                # Dicom filename end split.
                 dicom_filename_e_split = dicom_filename_end.split('-')
                 dicom_filename_end = '-'.join([dicom_filename_e_split[0],
                                                dicom_filename_e_split[1][1:]])
@@ -109,7 +109,7 @@ def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
 
 
 def determine_pos_neg(slice_indexes, start, end):
-    """Determines whether a grouped array of 3 slices contain a tumour.
+    """ Determines whether a grouped array of 3 slices contain a tumour.
 
     Args:
         slice_indexes: the indexes (number) of the slices being looked at
@@ -128,7 +128,7 @@ def determine_pos_neg(slice_indexes, start, end):
 
 
 def main():
-    """Main function to run code to collect data for
+    """ Main function to run code to collect data for
     consecutive 3 channel images.
     """
     # Setting file paths needed for using the data.
@@ -180,6 +180,7 @@ def main():
         array_of_three.append(dcm_fname)
         slice_indexes.append(slice_idx)
 
+        # Determine label of group of three.
         if img_count % 3 == 0:
             triple_count += 1
 
