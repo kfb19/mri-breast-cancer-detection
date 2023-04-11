@@ -62,7 +62,25 @@ class ScanDataset(Dataset):
             for fname in os.listdir(case_dir):
                 if '.bmp' in fname:
                     fpath = os.path.join(case_dir, fname)
-                    labels.append((fpath, target))
+                    # Load img from file (bmp).
+                    img_arr = imread(fpath, as_gray=True)
+
+                    # Normalise image.
+                    img_arr = self.normalize(img_arr)
+
+                    # Convert to Tensor (PyTorch matrix).
+                    data_tensor = torch.from_numpy(img_arr).cuda()
+                    data_tensor = data_tensor.type(torch.FloatTensor)
+
+                    # Add image channel dimension (to work with the CNN).
+                    data_tensor = torch.unsqueeze(data_tensor, 0)
+
+                    # Resize image.
+                    data_tensor = transforms.Resize(
+                        (self.img_size, self.img_size))(data_tensor)
+
+                    # Append label to list.
+                    labels.append((data_tensor, target))
 
         self.labels = labels
 
@@ -92,23 +110,7 @@ class ScanDataset(Dataset):
             target: the target classification/labels for that data.
         """
 
-        fpath, target = self.labels[idx]
-
-        # Load img from file (bmp).
-        img_arr = imread(fpath, as_gray=True)
-
-        # Normalise image.
-        img_arr = self.normalize(img_arr)
-
-        # Convert to Tensor (PyTorch matrix).
-        data = torch.from_numpy(img_arr).cuda()
-        data = data.type(torch.FloatTensor)
-
-        # Add image channel dimension (to work with the CNN).
-        data = torch.unsqueeze(data, 0)
-
-        # Resize image.
-        data = transforms.Resize((self.img_size, self.img_size))(data)
+        data, target = self.labels[idx]
 
         return data, target
 
