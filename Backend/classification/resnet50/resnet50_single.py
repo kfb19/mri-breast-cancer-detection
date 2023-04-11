@@ -284,11 +284,9 @@ def main():
             # Estimate how much to change the network parameters.
             loss = criterion(predictions, targets)
             loss = loss.to(device)
-            loss.backward()
             loss_total = loss_total + loss.item()
             counter = counter + 1
-            # Free memory to avoid overload.
-            del loss
+            loss.backward()
 
             # Change parameters.
             error_minimizer.step()
@@ -314,6 +312,7 @@ def main():
         # Predict on validation set (similar to training set):
         total_val_examples = 0
         num_correct_val = 0
+        val_loss_total = 0
         val_counter = 0
 
         # Switch network from training mode (parameters can be trained),
@@ -335,7 +334,6 @@ def main():
                 num_correct_val += predicted_class.eq(targets).sum().item()
                 val_loss = criterion(predictions, targets)
                 val_loss = val_loss.to(device)
-                val_loss.backward()
                 val_loss_total = val_loss_total + val_loss.item()
                 val_counter = val_counter + 1
 
@@ -363,6 +361,7 @@ def main():
 
         # Check via early stopping if the CNN is overfitting.
         if early_stopper.early_stop(val_average_loss):
+            print("Early stopping...")
             break
 
     # Plot prediction accuracy over time.
