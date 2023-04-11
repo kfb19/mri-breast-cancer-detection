@@ -62,7 +62,25 @@ class ScanDataset(Dataset):
             for fname in os.listdir(case_dir):
                 if '.bmp' in fname:
                     fpath = os.path.join(case_dir, fname)
-                    labels.append((fpath, target))
+                    # Load img from file (bmp).
+                    img_arr = imread(fpath, as_gray=True)
+
+                    # Normalise image.
+                    img_arr = self.normalize(img_arr)
+
+                    # Convert to Tensor (PyTorch matrix).
+                    data_tensor = torch.from_numpy(img_arr).cuda()
+                    data_tensor = data_tensor.type(torch.FloatTensor)
+
+                    # Add image channel dimension (to work with the CNN).
+                    data_tensor = torch.unsqueeze(data_tensor, 0)
+
+                    # Resize image.
+                    data_tensor = transforms.Resize(
+                        (self.img_size, self.img_size))(data_tensor)
+
+                    # Append label to list.
+                    labels.append((data_tensor, target))
 
         self.labels = labels
 
@@ -92,23 +110,7 @@ class ScanDataset(Dataset):
             target: the target classification/labels for that data.
         """
 
-        fpath, target = self.labels[idx]
-
-        # Load img from file (bmp).
-        img_arr = imread(fpath, as_gray=True)
-
-        # Normalise image.
-        img_arr = self.normalize(img_arr)
-
-        # Convert to Tensor (PyTorch matrix).
-        data = torch.from_numpy(img_arr).cuda()
-        data = data.type(torch.FloatTensor)
-
-        # Add image channel dimension (to work with the CNN).
-        data = torch.unsqueeze(data, 0)
-
-        # Resize image.
-        data = transforms.Resize((self.img_size, self.img_size))(data)
+        data, target = self.labels[idx]
 
         return data, target
 
@@ -434,10 +436,10 @@ def main():
                             true_pos_count, true_neg_count, file_name, folder)
     # Print the results to the screen.
     print(f"Test set accuracy: {evaluation.accuracy}")
-    print(f"True positive classifications: {evaluation.true_p}")
-    print(f"False positive classifications: {evaluation.false_p}")
-    print(f"True negative classifications: {evaluation.true_n}")
-    print(f"False negative classifications: {evaluation.false_n}")
+    print(f"True positive classifications: {true_pos_count}")
+    print(f"False positive classifications: {false_pos_count}")
+    print(f"True negative classifications: {true_neg_count}")
+    print(f"False negative classifications: {false_neg_count}")
     print(f"Negative predictive value: {evaluation.npv}")
     print(f"Positive predictive value: {evaluation.ppv}")
     print(f"Sensitivity: {evaluation.sensitivity}")
