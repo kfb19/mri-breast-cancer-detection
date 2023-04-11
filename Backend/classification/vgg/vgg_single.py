@@ -447,7 +447,7 @@ def main():
 
     # Get total results:
     # Total prediction accuracy of network on test set.
-    file_name = "vgg.txt"
+    file_name = "vgg_single.txt"
     folder = "vgg_single"
 
     # Calulcate and save evaluation metrics using the Evaluation module.

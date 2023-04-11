@@ -447,7 +447,7 @@ def main():
 
     # Get total results:
     # Total prediction accuracy of network on test set.
-    file_name = "resnet50.txt"
+    file_name = "resnet50_single.txt"
     folder = "resnet50_single"
 
     # Calulcate and save evaluation metrics using the Evaluation module.

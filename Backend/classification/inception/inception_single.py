@@ -447,7 +447,7 @@ def main():
 
     # Get total results:
     # Total prediction accuracy of network on test set.
-    file_name = "inception.txt"
+    file_name = "inception_single.txt"
     folder = "inception_single"
 
     # Calulcate and save evaluation metrics using the Evaluation module.
