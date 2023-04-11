@@ -19,6 +19,7 @@ from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
 from evaluation import Evaluation
+from early_stopper import EarlyStopper
 
 
 # pylint: disable=E1101
@@ -222,7 +223,7 @@ def main():
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
 
     # Defines epoch number.
-    epochs = 2
+    epochs = 10
 
     # Defines the "final" version of the net to save (updated later).
     net_final = deepcopy(net)
@@ -236,6 +237,9 @@ def main():
     val_accs = []
     losses = []
     val_losses = []
+
+    # Set early stopping variable.
+    early_stopper = EarlyStopper(patience=3, min_delta=10)
 
     # Training loop.
     for epoch in range(epochs):
@@ -345,7 +349,7 @@ def main():
         val_average_loss = val_loss_total / val_counter
         val_losses.append(val_average_loss)
 
-        # Finally, save model if the validation accuracy is the best so far.
+        # Save model if the validation accuracy is the best so far.
         if val_acc > best_validation_accuracy:
             best_validation_accuracy = val_acc
             print("Validation accuracy improved; saving model.")
@@ -356,6 +360,10 @@ def main():
             epochs_list = list(range(epochs))
             save_file = "E:\\data\\output\\nets\\resnet50_single.pth"
             torch.save(net_final.state_dict(), save_file)
+
+        # Check via early stopping if the CNN is overfitting.
+        if early_stopper.early_stop(val_average_loss):
+            break
 
     # Plot prediction accuracy over time.
     plt.figure()
