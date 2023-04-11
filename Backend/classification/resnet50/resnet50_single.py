@@ -194,6 +194,11 @@ def main():
     validation_dataset = validation_neg_dataset + validation_pos_dataset
     test_dataset = test_neg_dataset + test_pos_dataset
 
+    # del these 3
+    print(len(train_dataset))
+    print(len(validation_dataset))
+    print(len(test_dataset))
+
     # Makes sure CNN training runs on GPU, if available.
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = torch.device("cuda") if torch.cuda.is_available() \

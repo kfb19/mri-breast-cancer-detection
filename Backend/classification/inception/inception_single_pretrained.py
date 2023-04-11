@@ -1,6 +1,6 @@
-""" This module implements a pretrained ResNet50 with a single
+""" This module implements a pretrained Inception v3 with a single
 input channel (as images are greyscale). It trains,
-validates and tests a ResNet50 classification CNN
+validates and tests a Inception v3 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
@@ -14,8 +14,8 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torchvision.models import resnet50
-from torchvision.models import ResNet50_Weights
+from torchvision.models import inception_v3
+from torchvision.models import Inception_V3_Weights
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ from early_stopper import EarlyStopper
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
-    Resnet50 CNN.
+    Inception v3 CNN.
     """
 
     def __init__(self, data_dir, img_size):
@@ -146,12 +146,12 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements ResNet50 with single-channel input.
+        Implements Inception v3 with single-channel input.
         """
 
     # Directory where data is stored.
     data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single_pretrained"
+    results_path = "E:\\data\\output\\results\\inception_single_pretrained"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -225,7 +225,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
+    net = inception_v3(weights=Inception_V3_Weights.IMAGENET1K_V1)
 
     # This network takes single channel input.
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
@@ -375,8 +375,8 @@ def main():
 
             # Save final CNN in the specified filepath.
             epochs_list = list(range(epochs))
-            save_file = "E:\\data\\output\\nets\\" \
-                "resnet50_single_pretrained.pth"
+            save_file = "E:\\data\\output\\nets\\"\
+                "inception_single_pretrained.pth"
             torch.save(net_final.state_dict(), save_file)
 
         # Check via early stopping if the CNN is overfitting.
@@ -467,8 +467,8 @@ def main():
 
     # Get total results:
     # Total prediction accuracy of network on test set.
-    file_name = "resnet50_single_pretrained.txt"
-    folder = "resnet50_single_pretrained"
+    file_name = "inception_single_pretrained.txt"
+    folder = "inception_single_pretrained"
 
     # Calulcate and save evaluation metrics using the Evaluation module.
     evaluation = Evaluation(false_pos_count, false_neg_count,
