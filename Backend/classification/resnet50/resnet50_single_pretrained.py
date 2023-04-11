@@ -172,10 +172,28 @@ def main():
     print(f"Training: {num_train}\nValidation: {num_validation}" +
           f"\nTesting: {num_test}\n")
 
-    # Sets up the datasets with a random split.
-    train_dataset, validation_dataset, test_dataset = \
-        torch.utils.data.random_split(dataset,
-                                      [num_train, num_validation, num_test])
+    # Sets up the datasets with a random split, ensuring half/half 1/0.
+    neg_dataset = []
+    pos_dataset = []
+    for scan_slice in dataset:
+        if scan_slice[1] == 0:
+            neg_dataset.append(scan_slice)
+        else:
+            pos_dataset.append(scan_slice)
+
+    train_neg_dataset, validation_neg_dataset, test_neg_dataset = \
+        torch.utils.data.random_split(neg_dataset,
+                                      [num_train/2, num_validation/2,
+                                          num_test/2])
+
+    train_pos_dataset, validation_pos_dataset, test_pos_dataset = \
+        torch.utils.data.random_split(pos_dataset,
+                                      [num_train/2, num_validation/2,
+                                          num_test/2])
+
+    train_dataset = train_neg_dataset + train_pos_dataset
+    validation_dataset = validation_neg_dataset + validation_pos_dataset
+    test_dataset = test_neg_dataset + test_pos_dataset
 
     # Makes sure CNN training runs on GPU, if available.
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
