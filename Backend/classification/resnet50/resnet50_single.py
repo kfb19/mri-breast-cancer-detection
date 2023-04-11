@@ -239,7 +239,7 @@ def main():
     val_losses = []
 
     # Set early stopping variable.
-    early_stopper = EarlyStopper(patience=3, min_delta=10)
+    early_stopper = EarlyStopper(patience=10, min_delta=0)
 
     # Training loop.
     for epoch in range(epochs):
