@@ -45,8 +45,8 @@ class ScanDataset(Dataset):
 
     def create_labels(self):
         """ Creates and stores labels (positive or negative)
-        for scans within the dataset. Each label is a tuple:
-        (img filename, label number (0 or 1)).
+        for scans within the dataset. Converts scans to tensors.
+        Each label is a tuple: (image tensor, label number (0 or 1)).
 
         Args:
             data_dir: the directory of the data
@@ -235,6 +235,7 @@ def main():
     train_accs = []
     val_accs = []
     losses = []
+    val_losses = []
 
     # Training loop.
     for epoch in range(epochs):
@@ -309,6 +310,7 @@ def main():
         # Predict on validation set (similar to training set):
         total_val_examples = 0
         num_correct_val = 0
+        val_counter = 0
 
         # Switch network from training mode (parameters can be trained),
         # to evaluation mode (parameters can't be trained).
@@ -327,12 +329,21 @@ def main():
                 _, predicted_class = predictions.max(1)
                 total_val_examples += predicted_class.size(0)
                 num_correct_val += predicted_class.eq(targets).sum().item()
+                val_loss = criterion(predictions, targets)
+                val_loss = val_loss.to(device)
+                val_loss.backward()
+                val_loss_total = val_loss_total + val_loss.item()
+                val_counter = val_counter + 1
 
         # Get results:
         # Total prediction accuracy of network on validation set.
         val_acc = num_correct_val / total_val_examples
         print(f"Validation accuracy: {val_acc}")
         val_accs.append(val_acc)
+
+        # Save validation loss.
+        val_average_loss = val_loss_total / val_counter
+        val_losses.append(val_average_loss)
 
         # Finally, save model if the validation accuracy is the best so far.
         if val_acc > best_validation_accuracy:
@@ -364,6 +375,7 @@ def main():
     # Plot loss reduction.
     plt.figure()
     plt.plot(epochs_list, losses, 'b-', label='Training Loss')
+    plt.plot(epochs_list, val_losses, 'r-', label='Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss Reduction')
     plt.ylim(0.5, 1)
