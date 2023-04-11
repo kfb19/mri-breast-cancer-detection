@@ -182,13 +182,13 @@ def main():
 
     train_neg_dataset, validation_neg_dataset, test_neg_dataset = \
         torch.utils.data.random_split(neg_dataset,
-                                      [num_train/2, num_validation/2,
-                                          num_test/2])
+                                      [int(num_train/2), int(num_validation/2),
+                                          int(num_test/2)])
 
     train_pos_dataset, validation_pos_dataset, test_pos_dataset = \
         torch.utils.data.random_split(pos_dataset,
-                                      [num_train/2, num_validation/2,
-                                          num_test/2])
+                                      [int(num_train/2), int(num_validation/2),
+                                          int(num_test/2)])
 
     train_dataset = train_neg_dataset + train_pos_dataset
     validation_dataset = validation_neg_dataset + validation_pos_dataset
