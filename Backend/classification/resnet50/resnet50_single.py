@@ -223,7 +223,7 @@ def main():
     error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
 
     # Defines epoch number.
-    epochs = 10
+    epochs = 100
 
     # Defines the "final" version of the net to save (updated later).
     net_final = deepcopy(net)
@@ -370,7 +370,7 @@ def main():
     plt.plot(epochs_list, val_accs, 'r-', label='Validation Set Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Prediction Accuracy')
-    plt.ylim(0.5, 1)
+    plt.ylim(0, 1)
     plt.title('Classifier Training Evolution:\nPrediction Accuracy Over Time')
     plt.legend()
     if not os.path.exists(results_path):
@@ -385,7 +385,7 @@ def main():
     plt.plot(epochs_list, val_losses, 'r-', label='Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss Reduction')
-    plt.ylim(0.5, 1)
+    plt.ylim(0, 1)
     plt.title('Classifier Training Evolution:\nLoss Reduction')
     plt.legend()
     if not os.path.exists(results_path):
