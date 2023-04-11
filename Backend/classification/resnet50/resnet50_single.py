@@ -203,7 +203,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = resnet50(pretrained=False)
+    net = resnet50(weights=None)
 
     # This network takes single channel input.
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
@@ -224,6 +224,7 @@ def main():
 
     # Defines the "final" version of the net to save (updated later).
     net_final = deepcopy(net)
+    net_final = net_final.to(device)
 
     # Used to pick the best-performing model on the validation set.
     best_validation_accuracy = 0.
@@ -336,6 +337,7 @@ def main():
             best_validation_accuracy = val_acc
             print("Validation accuracy improved; saving model.")
             net_final = deepcopy(net)
+            net_final = net_final.to(device)
 
             # Save final CNN in the specified filepath.
             epochs_list = list(range(epochs))
