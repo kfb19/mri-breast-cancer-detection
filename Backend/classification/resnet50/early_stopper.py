@@ -51,9 +51,7 @@ class EarlyStopper:
             # New best - set counter to 0.
             self.min_validation_loss = validation_loss
             self.counter = 0
-            print("here1")  # DELETEME
         elif validation_loss > (self.min_validation_loss + self.min_delta):
-            print("Here2")  # DELETEME
             # Not better by enough - add 1 to counter.
             self.counter += 1
             # If over "patience" (num epochs) with no improvement, stop.
