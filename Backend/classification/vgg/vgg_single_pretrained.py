@@ -374,9 +374,11 @@ def main():
             net_final = net_final.to(device)
 
             # Save final CNN in the specified filepath.
-            epochs_list = list(range(epochs))
             save_file = "E:\\data\\output\\nets\\vgg_single_pretrained.pth"
             torch.save(net_final.state_dict(), save_file)
+
+        # For graph calculations later if early stopping happens.
+        epoch_counter = epoch_counter + 1
 
         # Check via early stopping if the CNN is overfitting.
         if early_stopper.early_stop(val_average_loss):
@@ -385,8 +387,8 @@ def main():
 
     # Plot prediction accuracy over time.
     plt.figure()
-    plt.plot(epochs_list, train_accs, 'b-', label='Training Set Accuracy')
-    plt.plot(epochs_list, val_accs, 'r-', label='Validation Set Accuracy')
+    plt.plot(epoch_counter, train_accs, 'b-', label='Training Set Accuracy')
+    plt.plot(epoch_counter, val_accs, 'r-', label='Validation Set Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Prediction Accuracy')
     plt.ylim(0, 1)
@@ -400,8 +402,8 @@ def main():
 
     # Plot loss reduction.
     plt.figure()
-    plt.plot(epochs_list, losses, 'b-', label='Training Loss')
-    plt.plot(epochs_list, val_losses, 'r-', label='Validation Loss')
+    plt.plot(epoch_counter, losses, 'b-', label='Training Loss')
+    plt.plot(epoch_counter, val_losses, 'r-', label='Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss Reduction')
     plt.ylim(0, 1)
