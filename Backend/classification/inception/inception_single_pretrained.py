@@ -149,9 +149,12 @@ def main():
         Implements Inception v3 with single-channel input.
         """
 
-    # Directory where data is stored.
+    # Directory information.
     data_dir = 'E:\\data\\output\\bmp_out_single_classify'
     results_path = "E:\\data\\output\\results\\inception_single_pretrained"
+    save_file = "E:\\data\\output\\nets\\inception_single_pretrained.pth"
+    file_name = "inception_single_pretrained.txt"
+    folder = "inception_single_pretrained"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -375,8 +378,6 @@ def main():
             net_final = net_final.to(device)
 
             # Save final CNN in the specified filepath.
-            save_file = "E:\\data\\output\\nets\\"\
-                "inception_single_pretrained.pth"
             torch.save(net_final.state_dict(), save_file)
 
         # For graph calculations later if early stopping happens.
@@ -473,9 +474,6 @@ def main():
 
     # Get total results:
     # Total prediction accuracy of network on test set.
-    file_name = "inception_single_pretrained.txt"
-    folder = "inception_single_pretrained"
-
     # Calulcate and save evaluation metrics using the Evaluation module.
     evaluation = Evaluation(false_pos_count, false_neg_count,
                             true_pos_count, true_neg_count, file_name, folder)
