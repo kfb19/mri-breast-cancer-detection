@@ -24,6 +24,7 @@ from early_stopper import EarlyStopper
 
 # pylint: disable=E1101
 # pylint: disable=E1102
+# pylint: disable=W0612
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
@@ -230,8 +231,17 @@ def main():
     net = vgg11(weights=None)
 
     # This network takes single channel input.
-    net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
-                          stride=(2, 2), padding=(3, 3), bias=False)
+    # net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
+    # stride=(2, 2), padding=(3, 3), bias=False)
+
+    # Modify the first convolutional layer to accept one channel input
+    net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
+                                stride=(2, 2), padding=(3, 3), bias=False)
+
+    # Modify all other convolutional layers to accept one channel input
+    for i, layer in enumerate(net.features):
+        if isinstance(layer, nn.Conv2d):
+            layer.in_channels = 1
 
     # Casts CNN to run on device.
     net = net.to(device)
