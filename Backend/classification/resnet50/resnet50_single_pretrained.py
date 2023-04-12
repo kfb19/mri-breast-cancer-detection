@@ -387,10 +387,13 @@ def main():
             print("Early stopping...")
             break
 
+    # Sort epochs for graph.
+    epoch_list = list(range(epoch_counter))
+
     # Plot prediction accuracy over time.
     plt.figure()
-    plt.plot(epoch_counter, train_accs, 'b-', label='Training Set Accuracy')
-    plt.plot(epoch_counter, val_accs, 'r-', label='Validation Set Accuracy')
+    plt.plot(epoch_list, train_accs, 'b-', label='Training Set Accuracy')
+    plt.plot(epoch_list, val_accs, 'r-', label='Validation Set Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Prediction Accuracy')
     plt.ylim(0, 1)
@@ -404,8 +407,8 @@ def main():
 
     # Plot loss reduction.
     plt.figure()
-    plt.plot(epoch_counter, losses, 'b-', label='Training Loss')
-    plt.plot(epoch_counter, val_losses, 'r-', label='Validation Loss')
+    plt.plot(epoch_list, losses, 'b-', label='Training Loss')
+    plt.plot(epoch_list, val_losses, 'r-', label='Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss Reduction')
     plt.ylim(0, 1)
