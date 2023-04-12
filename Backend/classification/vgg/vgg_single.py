@@ -230,15 +230,11 @@ def main():
     # Define the convoluted neural network.
     net = vgg11(weights=None)
 
-    # This network takes single channel input.
-    # net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
-    # stride=(2, 2), padding=(3, 3), bias=False)
-
-    # Modify the first convolutional layer to accept one channel input
+    # Modify the first convolutional layer to accept one channel input.
     net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
                                 stride=(2, 2), padding=(3, 3), bias=False)
 
-    # Modify all other convolutional layers to accept one channel input
+    # Modify all other convolutional layers to accept one channel input.
     for i, layer in enumerate(net.features):
         if isinstance(layer, nn.Conv2d):
             layer.in_channels = 1
