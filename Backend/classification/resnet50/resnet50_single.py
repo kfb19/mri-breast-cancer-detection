@@ -454,8 +454,8 @@ def main():
             confusion_vector = predicted_class / targets
             num_true_pos = torch.sum(confusion_vector == 1).item()
             num_false_pos = torch.sum(confusion_vector == float('inf')).item()
-            num_false_neg = torch.sum(torch.isnan(confusion_vector)).item()
-            num_true_neg = torch.sum(confusion_vector == 0).item()
+            num_true_neg = torch.sum(torch.isnan(confusion_vector)).item()
+            num_false_neg = torch.sum(confusion_vector == 0).item()
 
             true_pos_count += num_true_pos
             false_pos_count += num_false_pos
