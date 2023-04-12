@@ -403,7 +403,7 @@ def main():
     plt.plot(epoch_list, val_accs, 'r-', label='Validation Set Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Prediction Accuracy')
-    plt.ylim(0, 1)
+    plt.ylim(0.5, 1)
     plt.title('Classifier Training Evolution:\nPrediction Accuracy Over Time')
     plt.legend()
     if not os.path.exists(results_path):
