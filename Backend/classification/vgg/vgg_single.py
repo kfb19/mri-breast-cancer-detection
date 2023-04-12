@@ -24,6 +24,7 @@ from early_stopper import EarlyStopper
 
 # pylint: disable=E1101
 # pylint: disable=E1102
+# pylint: disable=W0612
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
@@ -160,10 +161,10 @@ def main():
     dataset = ScanDataset(data_dir, img_size)
 
     # Fractions for splitting data into train/validation/test.
-    # An 80/10/10 split has been chosen.
-    train_fraction = 0.8
-    validation_fraction = 0.1
-    test_fraction = 0.1
+    # An 60/20/20 split has been chosen.
+    train_fraction = 0.6
+    validation_fraction = 0.2
+    test_fraction = 0.2
     dataset_size = len(dataset)
     print(f"Dataset size: {dataset_size}\n")
 
@@ -229,9 +230,14 @@ def main():
     # Define the convoluted neural network.
     net = vgg11(weights=None)
 
-    # This network takes single channel input.
-    net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
-                          stride=(2, 2), padding=(3, 3), bias=False)
+    # Modify the first convolutional layer to accept one channel input.
+    net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
+                                stride=(2, 2), padding=(3, 3), bias=False)
+
+    # Modify all other convolutional layers to accept one channel input.
+    for i, layer in enumerate(net.features):
+        if isinstance(layer, nn.Conv2d):
+            layer.in_channels = 1
 
     # Casts CNN to run on device.
     net = net.to(device)
@@ -396,7 +402,7 @@ def main():
     plt.plot(epoch_list, val_accs, 'r-', label='Validation Set Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Prediction Accuracy')
-    plt.ylim(0, 1)
+    plt.ylim(0.5, 1)
     plt.title('Classifier Training Evolution:\nPrediction Accuracy Over Time')
     plt.legend()
     if not os.path.exists(results_path):
@@ -454,8 +460,8 @@ def main():
             confusion_vector = predicted_class / targets
             num_true_pos = torch.sum(confusion_vector == 1).item()
             num_false_pos = torch.sum(confusion_vector == float('inf')).item()
-            num_false_neg = torch.sum(torch.isnan(confusion_vector)).item()
-            num_true_neg = torch.sum(confusion_vector == 0).item()
+            num_true_neg = torch.sum(torch.isnan(confusion_vector)).item()
+            num_false_neg = torch.sum(confusion_vector == 0).item()
 
             true_pos_count += num_true_pos
             false_pos_count += num_false_pos
