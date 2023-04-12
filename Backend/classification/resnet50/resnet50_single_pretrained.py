@@ -161,10 +161,10 @@ def main():
     dataset = ScanDataset(data_dir, img_size)
 
     # Fractions for splitting data into train/validation/test.
-    # An 80/10/10 split has been chosen.
-    train_fraction = 0.8
-    validation_fraction = 0.1
-    test_fraction = 0.1
+    # An 60/20/20 split has been chosen.
+    train_fraction = 0.6
+    validation_fraction = 0.2
+    test_fraction = 0.2
     dataset_size = len(dataset)
     print(f"Dataset size: {dataset_size}\n")
 
