@@ -215,11 +215,13 @@ def main():
 
     # Loads images for validation in a random order.
     validation_loader = DataLoader(validation_dataset,
-                                   batch_size=eval_batchsize)
+                                   batch_size=eval_batchsize,
+                                   shuffle=True)
 
     # Loads images for testing in a random order.
     test_loader = DataLoader(test_dataset,
-                             batch_size=eval_batchsize)
+                             batch_size=eval_batchsize,
+                             shuffle=True)
 
     # Set random seeds for reproducibility.
     seed = 42
