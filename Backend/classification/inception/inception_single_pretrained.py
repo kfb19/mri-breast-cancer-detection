@@ -488,7 +488,7 @@ def main():
                     with open(file_path, "w", encoding="utf-8") as file:
                         file.write('Target labels:')
                         file.write(str(targets[:num_viz].tolist()))
-                        file.write('Classifier predictions:')
+                        file.write('\nClassifier predictions:')
                         file.write(str(predicted_class[:num_viz].tolist()))
                     file.close()
 
