@@ -234,13 +234,17 @@ def main():
     net = inception_v3(weights=Inception_V3_Weights.IMAGENET1K_V1)
 
     # Modify the first convolutional layer to accept one channel input.
-    net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
-                                stride=(2, 2), padding=(3, 3), bias=False)
+    net.Conv2d_1a_3x3.conv = nn.Conv2d(1, 32, kernel_size=(3, 3),
+                                       stride=(2, 2), bias=False)
 
     # Modify all other convolutional layers to accept one channel input.
-    for i, layer in enumerate(net.features):
-        if isinstance(layer, nn.Conv2d):
-            layer.in_channels = 1
+    for name, module in net.named_modules():
+        if isinstance(module, nn.Conv2d):
+            if name != 'Conv2d_1a_3x3':
+                module.in_channels = 1
+                module.weight.data[:, :, 0, :] = module.weight.data.mean(dim=2)
+                module.padding_mode = 'zeros'
+                module.bias.data = None
 
     # Casts CNN to run on device.
     net = net.to(device)
