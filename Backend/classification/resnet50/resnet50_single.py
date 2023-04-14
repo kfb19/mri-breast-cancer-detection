@@ -472,6 +472,14 @@ def main():
                 print(targets[:num_viz].tolist())
                 print('Classifier predictions:')
                 print(predicted_class[:num_viz].tolist())
+                file_path = os.path.join(results_path, "predictions.txt")
+                if not os.path.exists(file_path):
+                    with open(file_path, "w", encoding="utf-8") as file:
+                        file.write('Target labels:')
+                        file.write(targets[:num_viz].tolist())
+                        file.write('Classifier predictions:')
+                        file.write(predicted_class[:num_viz].tolist())
+                    file.close()
 
     # Get total results:
     # Total prediction accuracy of network on test set.
