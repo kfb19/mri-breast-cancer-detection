@@ -1,6 +1,6 @@
 """ This module preprocesses data used for breast cancer classification
-using the RGB channels for consecutive images (e.g. 1/2/3, 4/5/6...). It
-processes the images, saves them as bitmaps, and groups them in threes.
+using the RGB channels for three different scan types of the same slice.
+It processes the images, saves them as bitmaps, and groups them in threes.
 """
 
 import os
@@ -17,6 +17,7 @@ def read_data(boxes_path, mapping_path, scan_pass):
     Args:
         boxes_path: the bounding boxes storage path
         mapping_path: the path to the file that maps bounding boxes to the data
+        scan_pass: specifies the type of scan to store data for
     Returns:
         bounding_boxes: a data structure containing the bounding boxes
         scan_data: data of the MRI scans
@@ -24,18 +25,18 @@ def read_data(boxes_path, mapping_path, scan_pass):
 
     # Reading the bounding boxes data.
     bounding_boxes = pd.read_csv(boxes_path)
-    # Reading the mapping path data of the first 3 scan passes.SORTME!!!!
+    # Reading the mapping path data of the first 3 scan passes.
     scan_data = pd.read_csv(mapping_path)
     # Each row refers to a different 2D slice of a 3D volume.
     if scan_pass == 1:
         scan_data = scan_data[scan_data['original_path_and_filename'].str.
-                              contains('pre')]
+                              contains('1st pass')]
     elif scan_pass == 2:
         scan_data = scan_data[scan_data['original_path_and_filename'].str.
-                              contains('pre')]
+                              contains('2nd pass')]
     elif scan_pass == 3:
         scan_data = scan_data[scan_data['original_path_and_filename'].str.
-                              contains('pre')]
+                              contains('3rd pass')]
 
     return bounding_boxes, scan_data
 
