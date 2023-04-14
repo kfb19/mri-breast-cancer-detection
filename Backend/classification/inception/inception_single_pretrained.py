@@ -244,7 +244,6 @@ def main():
                 module.in_channels = 1
                 module.weight.data[:, :, 0, :] = module.weight.data.mean(dim=2)
                 module.padding_mode = 'zeros'
-                module.bias.data = None
 
     # Casts CNN to run on device.
     net = net.to(device)
