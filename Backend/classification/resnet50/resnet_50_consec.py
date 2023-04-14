@@ -65,7 +65,6 @@ class ScanDataset(Dataset):
                 for fname in os.listdir(os.path.join(case_dir, folder)):
                     if '.bmp' in fname:
                         fpath = os.path.join(case_dir, folder, fname)
-                        fpath = os.path.join(case_dir, fname)
                         # Load img from file (bmp).
                         img_arr = imread(fpath, as_gray=True)
 
@@ -73,20 +72,29 @@ class ScanDataset(Dataset):
                         img_arr = self.normalize(img_arr)
 
                         # Convert to Tensor (PyTorch matrix).
-                        data_tensor = torch.from_numpy(img_arr).cuda()
-                        data_tensor = data_tensor.type(torch.FloatTensor)
+                        data_tensor = torch.from_numpy(img_arr).type(
+                            torch.FloatTensor)
 
-                        # Add image channel dimension (to work with the CNN).
-                        data_tensor = torch.unsqueeze(data_tensor, 0)
+                        # Convert to a 4D tensor for resize operation.
+                        data_tensor = data_tensor.unsqueeze(0).unsqueeze(0)
 
                         # Resize image.
                         data_tensor = transforms.Resize(
-                         (self.img_size, self.img_size))(data_tensor)
+                            (self.img_size, self.img_size))(data_tensor)
+
+                        # Remove extra dimensions.
+                        data_tensor = data_tensor.squeeze(0).squeeze(0)
+
                         group.append(data_tensor)
-                    # Put 3 consecutive scans in the 3 channel inputs.
-                    data = torch.tensor(group).permute(1, 0, 2, 3)
-                    data = torch.squeeze(group).type(torch.FloatTensor)
-                    labels.append(data, target)
+
+                # Create RGB image tensor with the 3 images as channels.
+                data = torch.stack(group, dim=0)
+                data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+
+                # Create tuple of data and label and append to list.
+                label = (data, target)
+                labels.append(label)
+
         self.labels = labels
 
     def normalize(self, img):
