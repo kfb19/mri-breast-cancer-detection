@@ -149,15 +149,15 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements ResNet50 with single-channel input.
+        Implements ResNet50 with 3-channel input.
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single"
-    save_file = "E:\\data\\output\\nets\\resnet50_single.pth"
-    file_name = "resnet50_single.txt"
-    folder = "resnet50_single"
+    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
+    results_path = "E:\\data\\output\\results\\resnet50_consec"
+    save_file = "E:\\data\\output\\nets\\resnet50_consec.pth"
+    file_name = "resnet50_cosnec.txt"
+    folder = "resnet50_consec"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -235,7 +235,7 @@ def main():
     # Define the convoluted neural network.
     net = resnet50(weights=None)
 
-    # This network takes single channel input.
+    # This network takes a 3 channel input.
     net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
                           stride=(2, 2), padding=(3, 3), bias=False)
 
