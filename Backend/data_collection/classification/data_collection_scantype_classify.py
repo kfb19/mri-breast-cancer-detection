@@ -186,14 +186,19 @@ def main():
         slice_indexes.append(slice_idx)
 
         # Look up DICOM filenames in the dictionary.
+        possible = True
         array_of_three = [dcm_fname]
         if (vol_index, slice_idx) in dicom_dict:
             array_of_three.append(dicom_dict[(vol_index, slice_idx)])
+        else:
+            possible = False
         if (vol_index, slice_idx) in dicom_dict:
             array_of_three.append(dicom_dict[(vol_index, slice_idx)])
+        else:
+            possible = False
 
         # Determine slice label -> 1 if positive.
-        if slice_idx >= start_slice and slice_idx < end_slice:
+        if (slice_idx >= start_slice and slice_idx < end_slice) and possible:
             if pos_extracted >= n_class:
                 continue
             save_dicom_to_bitmap(array_of_three, 1, vol_index, target_bmp_dir,
@@ -201,7 +206,8 @@ def main():
             pos_extracted += 1
         # Determine slice label -> 0 if negative.
         # Negative is defined as at least 5 slices from a positive image.
-        elif (slice_idx + 5) <= start_slice or (slice_idx - 5) > end_slice:
+        elif ((slice_idx + 5) <= start_slice or (
+                slice_idx - 5) > end_slice) and possible:
             if neg_extracted >= n_class:
                 continue
             save_dicom_to_bitmap(array_of_three, 0, vol_index, target_bmp_dir,
