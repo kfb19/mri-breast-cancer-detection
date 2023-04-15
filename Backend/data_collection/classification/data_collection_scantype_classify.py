@@ -30,14 +30,13 @@ def read_data(boxes_path, mapping_path, scan_pass):
     # Each row refers to a different 2D slice of a 3D volume.
     if scan_pass == 1:
         scan_data = scan_data[scan_data['original_path_and_filename'].str.
-                              contains('1st pass')]
+                              contains('post_1')]
     elif scan_pass == 2:
         scan_data = scan_data[scan_data['original_path_and_filename'].str.
-                              contains('2nd pass')]
+                              contains('post_2')]
     elif scan_pass == 3:
         scan_data = scan_data[scan_data['original_path_and_filename'].str.
-                              contains('3rd pass')]
-
+                              contains('post_3')]
     return bounding_boxes, scan_data
 
 
@@ -181,7 +180,6 @@ def main():
             save_dicom_to_bitmap(array_of_three, 1, vol_index, target_bmp_dir,
                                  file_no)
             pos_extracted += 1
-
         # Determine slice label -> 0 if negative.
         # Negative is defined as at least 5 slices from a positive image.
         elif (slice_idx + 5) <= start_slice or (slice_idx - 5) > end_slice:
@@ -192,6 +190,7 @@ def main():
             neg_extracted += 1
 
         slice_indexes = []
+        array_of_three = []
         file_no += 1
         img_count += 1
 
