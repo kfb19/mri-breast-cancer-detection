@@ -138,8 +138,9 @@ def main():
     boxes, data3 = read_data(boxes_path, mapping_path, 3)
 
     # Preprocess data2 and data3.
-    dicom_dict = {}
-    for dfm in [data2, data3]:
+    dicom_dict_2 = {}
+    dicom_dict_3 = {}
+    for dfm in data2:
         for _, row in dfm.iterrows():
             vol_idx = int((row['original_path_and_filename'].
                            split('/')[1]).split('_')[-1])
@@ -147,7 +148,17 @@ def main():
                             split('/')[-1]).split('_')[-1]).replace('.dcm',
                                                                     ''))
             dicom_fname = os.path.join(data_path, row['classic_path'])
-            dicom_dict[(vol_idx, slice_idx)] = dicom_fname
+            dicom_dict_2[(vol_idx, slice_idx)] = dicom_fname
+
+    for dfm in data3:
+        for _, row in dfm.iterrows():
+            vol_idx = int((row['original_path_and_filename'].
+                           split('/')[1]).split('_')[-1])
+            slice_idx = int(((row['original_path_and_filename'].
+                            split('/')[-1]).split('_')[-1]).replace('.dcm',
+                                                                    ''))
+            dicom_fname = os.path.join(data_path, row['classic_path'])
+            dicom_dict_3[(vol_idx, slice_idx)] = dicom_fname
 
     # Image extraction.
 
@@ -188,12 +199,12 @@ def main():
         # Look up DICOM filenames in the dictionary.
         possible = True
         array_of_three = [dcm_fname]
-        if (vol_index, slice_idx) in dicom_dict:
-            array_of_three.append(dicom_dict[(vol_index, slice_idx)])
+        if (vol_index, slice_idx) in dicom_dict_2:
+            array_of_three.append(dicom_dict_2[(vol_index, slice_idx)])
         else:
             possible = False
-        if (vol_index, slice_idx) in dicom_dict:
-            array_of_three.append(dicom_dict[(vol_index, slice_idx)])
+        if (vol_index, slice_idx) in dicom_dict_3:
+            array_of_three.append(dicom_dict_3[(vol_index, slice_idx)])
         else:
             possible = False
 
