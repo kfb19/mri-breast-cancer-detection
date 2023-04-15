@@ -140,7 +140,7 @@ def main():
     # Preprocess data2 and data3.
     dicom_dict_2 = {}
     dicom_dict_3 = {}
-    for dfm in data2:
+    for dfm in [data2]:
         for _, row in dfm.iterrows():
             vol_idx = int((row['original_path_and_filename'].
                            split('/')[1]).split('_')[-1])
@@ -150,7 +150,7 @@ def main():
             dicom_fname = os.path.join(data_path, row['classic_path'])
             dicom_dict_2[(vol_idx, slice_idx)] = dicom_fname
 
-    for dfm in data3:
+    for dfm in [data3]:
         for _, row in dfm.iterrows():
             vol_idx = int((row['original_path_and_filename'].
                            split('/')[1]).split('_')[-1])
