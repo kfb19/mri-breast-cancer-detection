@@ -176,12 +176,12 @@ def main():
         # Making up the array of 3 files from the 3 data sections.
         array_of_three.append(dcm_fname)
 
-        # Get the corresponding row in data2 and get dcm_fname2
+        # Get the corresponding row in data2 and get dcm_fname2.
         data2_row = data2.iloc[file_no]
         dcm_fname2 = os.path.join(data_path, data2_row['classic_path'])
         array_of_three.append(dcm_fname2)
 
-        # Get the corresponding row in data3 and get dcm_fname3
+        # Get the corresponding row in data3 and get dcm_fname3.
         data3_row = data3.iloc[file_no]
         dcm_fname3 = os.path.join(data_path, data3_row['classic_path'])
         array_of_three.append(dcm_fname3)
