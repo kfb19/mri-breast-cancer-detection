@@ -215,6 +215,7 @@ def main():
             save_dicom_to_bitmap(array_of_three, 1, vol_index, target_bmp_dir,
                                  file_no)
             pos_extracted += 1
+
         # Determine slice label -> 0 if negative.
         # Negative is defined as at least 5 slices from a positive image.
         elif ((slice_idx + 5) <= start_slice or (
