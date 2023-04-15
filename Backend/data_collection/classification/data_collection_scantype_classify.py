@@ -54,11 +54,14 @@ def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
         FileNotFoundError: if the DICOM file is not found
     """
 
+    # To make sure no overwriting happens.
+    img_count = 0
+
     for dicom_filename in array_of_three:
         # Create a path to save the slice .bmp file in.
         # Do this according to the original DICOM filename and target label.
         bmp_path = dicom_filename.split('/')[-1].replace(
-            '.dcm', f'-{patient_index}.bmp')
+            '.dcm', f'-{patient_index}' + str(img_count) + '.bmp')
         if label == 1:
             cancer_status = 'pos'
         else:
@@ -113,6 +116,8 @@ def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
             imsave(bmp_path, img)
 
             print("New image saved")
+
+            img_count += 1
 
 
 def main():
@@ -169,9 +174,17 @@ def main():
         slice_indexes.append(slice_idx)
 
         # Making up the array of 3 files from the 3 data sections.
-        array_of_three.append(data1[file_no])
-        array_of_three.append(data2[file_no])
-        array_of_three.append(data3[file_no])
+        array_of_three.append(dcm_fname)
+
+        # Get the corresponding row in data2 and get dcm_fname2
+        data2_row = data2.iloc[file_no]
+        dcm_fname2 = os.path.join(data_path, data2_row['classic_path'])
+        array_of_three.append(dcm_fname2)
+
+        # Get the corresponding row in data3 and get dcm_fname3
+        data3_row = data3.iloc[file_no]
+        dcm_fname3 = os.path.join(data_path, data3_row['classic_path'])
+        array_of_three.append(dcm_fname3)
 
         # Determine slice label -> 1 if positive.
         if slice_idx >= start_slice and slice_idx < end_slice:
