@@ -1,5 +1,5 @@
 """ This module implements ResNet50 with a three
-channel input (3consecutive images). It trains,
+channel input (3 consecutive images). It trains,
 validates and tests a ResNet50 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
