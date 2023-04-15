@@ -216,11 +216,13 @@ def main():
 
     # Loads images for validation in a random order.
     validation_loader = DataLoader(validation_dataset,
-                                   batch_size=eval_batchsize)
+                                   batch_size=eval_batchsize,
+                                   shuffle=True)
 
     # Loads images for testing in a random order.
     test_loader = DataLoader(test_dataset,
-                             batch_size=eval_batchsize)
+                             batch_size=eval_batchsize,
+                             shuffle=True)
 
     # Set random seeds for reproducibility.
     seed = 42
@@ -232,13 +234,16 @@ def main():
     net = inception_v3(weights=Inception_V3_Weights.IMAGENET1K_V1)
 
     # Modify the first convolutional layer to accept one channel input.
-    net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
-                                stride=(2, 2), padding=(3, 3), bias=False)
+    net.Conv2d_1a_3x3.conv = nn.Conv2d(1, 32, kernel_size=(3, 3),
+                                       stride=(2, 2), bias=False)
 
     # Modify all other convolutional layers to accept one channel input.
-    for i, layer in enumerate(net.features):
-        if isinstance(layer, nn.Conv2d):
-            layer.in_channels = 1
+    for name, module in net.named_modules():
+        if isinstance(module, nn.Conv2d):
+            if name != 'Conv2d_1a_3x3':
+                module.in_channels = 1
+                module.weight.data[:, :, 0, :] = module.weight.data.mean(dim=2)
+                module.padding_mode = 'zeros'
 
     # Casts CNN to run on device.
     net = net.to(device)
@@ -477,6 +482,14 @@ def main():
                 print(targets[:num_viz].tolist())
                 print('Classifier predictions:')
                 print(predicted_class[:num_viz].tolist())
+                file_path = os.path.join(results_path, "predictions.txt")
+                if not os.path.exists(file_path):
+                    with open(file_path, "w", encoding="utf-8") as file:
+                        file.write('Target labels:')
+                        file.write(str(targets[:num_viz].tolist()))
+                        file.write('\nClassifier predictions:')
+                        file.write(str(predicted_class[:num_viz].tolist()))
+                    file.close()
 
     # Get total results:
     # Total prediction accuracy of network on test set.

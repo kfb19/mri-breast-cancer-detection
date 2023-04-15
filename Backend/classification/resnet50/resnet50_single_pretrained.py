@@ -215,11 +215,13 @@ def main():
 
     # Loads images for validation in a random order.
     validation_loader = DataLoader(validation_dataset,
-                                   batch_size=eval_batchsize)
+                                   batch_size=eval_batchsize,
+                                   shuffle=True)
 
     # Loads images for testing in a random order.
     test_loader = DataLoader(test_dataset,
-                             batch_size=eval_batchsize)
+                             batch_size=eval_batchsize,
+                             shuffle=True)
 
     # Set random seeds for reproducibility.
     seed = 42
@@ -471,6 +473,14 @@ def main():
                 print(targets[:num_viz].tolist())
                 print('Classifier predictions:')
                 print(predicted_class[:num_viz].tolist())
+                file_path = os.path.join(results_path, "predictions.txt")
+                if not os.path.exists(file_path):
+                    with open(file_path, "w", encoding="utf-8") as file:
+                        file.write('Target labels:')
+                        file.write(str(targets[:num_viz].tolist()))
+                        file.write('\nClassifier predictions:')
+                        file.write(str(predicted_class[:num_viz].tolist()))
+                    file.close()
 
     # Get total results:
     # Total prediction accuracy of network on test set.

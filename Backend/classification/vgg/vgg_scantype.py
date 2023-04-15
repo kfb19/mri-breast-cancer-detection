@@ -1,5 +1,5 @@
-""" This module implements VGG11 with a single
-input channel (as images are greyscale). It trains,
+""" This module implements VGG11 with a three
+channel input (3 passes on the image). It trains,
 validates and tests a VGG11 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
@@ -24,7 +24,6 @@ from early_stopper import EarlyStopper
 
 # pylint: disable=E1101
 # pylint: disable=E1102
-# pylint: disable=W0612
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
@@ -61,28 +60,40 @@ class ScanDataset(Dataset):
         for target, target_label in enumerate(['neg', 'pos']):
             case_dir = os.path.join(self.data_dir, target_label)
             # Iterate over all images in the class/case type.
-            for fname in os.listdir(case_dir):
-                if '.bmp' in fname:
-                    fpath = os.path.join(case_dir, fname)
-                    # Load img from file (bmp).
-                    img_arr = imread(fpath, as_gray=True)
+            for folder in os.listdir(case_dir):
+                group = []
+                for fname in os.listdir(os.path.join(case_dir, folder)):
+                    if '.bmp' in fname:
+                        fpath = os.path.join(case_dir, folder, fname)
+                        # Load img from file (bmp).
+                        img_arr = imread(fpath, as_gray=True)
 
-                    # Normalise image.
-                    img_arr = self.normalize(img_arr)
+                        # Normalise image.
+                        img_arr = self.normalize(img_arr)
 
-                    # Convert to Tensor (PyTorch matrix).
-                    data_tensor = torch.from_numpy(img_arr).cuda()
-                    data_tensor = data_tensor.type(torch.FloatTensor)
+                        # Convert to Tensor (PyTorch matrix).
+                        data_tensor = torch.from_numpy(img_arr).type(
+                            torch.FloatTensor)
 
-                    # Add image channel dimension (to work with the CNN).
-                    data_tensor = torch.unsqueeze(data_tensor, 0)
+                        # Convert to a 4D tensor for resize operation.
+                        data_tensor = data_tensor.unsqueeze(0).unsqueeze(0)
 
-                    # Resize image.
-                    data_tensor = transforms.Resize(
-                        (self.img_size, self.img_size))(data_tensor)
+                        # Resize image.
+                        data_tensor = transforms.Resize(
+                            (self.img_size, self.img_size))(data_tensor)
 
-                    # Append label to list.
-                    labels.append((data_tensor, target))
+                        # Remove extra dimensions.
+                        data_tensor = data_tensor.squeeze(0).squeeze(0)
+
+                        group.append(data_tensor)
+
+                # Create RGB image tensor with the 3 images as channels.
+                data = torch.stack(group, dim=0)
+                data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+
+                # Create tuple of data and label and append to list.
+                label = (data, target)
+                labels.append(label)
 
         self.labels = labels
 
@@ -146,15 +157,15 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements VGG11 with single-channel input.
+        Implements VGG11 with 3-channel input.
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\vgg_single"
-    save_file = "E:\\data\\output\\nets\\vgg_single.pth"
-    file_name = "vgg_single.txt"
-    folder = "vgg_single"
+    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
+    results_path = "E:\\data\\output\\results\\vgg_scantype"
+    save_file = "E:\\data\\output\\nets\\vgg_scantype.pth"
+    file_name = "vgg_scantype.txt"
+    folder = "vgg_scantype"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -232,14 +243,9 @@ def main():
     # Define the convoluted neural network.
     net = vgg11(weights=None)
 
-    # Modify the first convolutional layer to accept one channel input.
-    net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
-                                stride=(2, 2), padding=(3, 3), bias=False)
-
-    # Modify all other convolutional layers to accept one channel input.
-    for i, layer in enumerate(net.features):
-        if isinstance(layer, nn.Conv2d):
-            layer.in_channels = 1
+    # This network takes a 3 channel input.
+    net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
+                          stride=(2, 2), padding=(3, 3), bias=False)
 
     # Casts CNN to run on device.
     net = net.to(device)
