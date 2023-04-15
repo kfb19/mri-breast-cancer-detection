@@ -164,7 +164,7 @@ def main():
     data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
     results_path = "E:\\data\\output\\results\\vgg_consec"
     save_file = "E:\\data\\output\\nets\\vgg_consec.pth"
-    file_name = "vgg_cosnec.txt"
+    file_name = "vgg_consec.txt"
     folder = "vgg_consec"
 
     # Length in pixels of size of image once resized for the network.

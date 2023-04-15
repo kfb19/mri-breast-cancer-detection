@@ -1,7 +1,7 @@
-""" This module implements a pretrained ResNet50
-with a three channel input (3 consecutive images).
-It trains, validates and tests a ResNet50 classification
-CNN on Breast Cancer MRI scan slices, then calculates
+""" This module implements ResNet50 with a three
+channel input (3 different MRI slice scan types).
+It trains, validates and tests a ResNet50 classification CNN
+on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
 
@@ -15,7 +15,6 @@ from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.models import resnet50
-from torchvision.models import ResNet50_Weights
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -162,11 +161,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_consec_pretrained"
-    save_file = "E:\\data\\output\\nets\\resnet50_consec_pretrained.pth"
-    file_name = "resnet50_consec_pretrained.txt"
-    folder = "resnet50_consec_pretrained"
+    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
+    results_path = "E:\\data\\output\\results\\resnet50_scantype"
+    save_file = "E:\\data\\output\\nets\\resnet50_scantype.pth"
+    file_name = "resnet50_scantype.txt"
+    folder = "resnet50_scantype"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -242,7 +241,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
+    net = resnet50(weights=None)
 
     # This network takes a 3 channel input.
     net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
