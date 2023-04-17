@@ -1,6 +1,6 @@
-""" This module implements a pretrained VGG11
+""" This module implements a pretrained VGG19
 with a three channel input (3 consecutive images).
-It trains, validates and tests a VGG11 classification CNN
+It trains, validates and tests a VGG19 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
@@ -14,8 +14,8 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torchvision.models import vgg11
-from torchvision.models import VGG11_Weights
+from torchvision.models import vgg19
+from torchvision.models import VGG19_Weights
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ from early_stopper import EarlyStopper
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
-    VGG11 CNN.
+    VGG19 CNN.
     """
 
     def __init__(self, data_dir, img_size):
@@ -158,7 +158,7 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements VGG11 with 3-channel input.
+        Implements VGG19 with 3-channel input.
         """
 
     # Directory information.
@@ -242,7 +242,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = vgg11(weights=VGG11_Weights.IMAGENET1K_V1)
+    net = vgg19(weights=VGG19_Weights.IMAGENET1K_V1)
 
     # This network takes a 3 channel input.
     net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
