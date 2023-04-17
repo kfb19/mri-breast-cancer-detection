@@ -1,6 +1,6 @@
-""" This module implements Inception v3 with a single
-input channel (as images are greyscale). It trains,
-validates and tests a Inception v3 classification CNN
+""" This module implements DenseNet201 with a three
+channel input (3 different MRI slice scan types).
+It trains, validates and tests a DenseNet201 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
@@ -14,7 +14,7 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torchvision.models import inception_v3
+from torchvision.models import densenet201
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -24,11 +24,10 @@ from early_stopper import EarlyStopper
 
 # pylint: disable=E1101
 # pylint: disable=E1102
-# pylint: disable=W0612
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
-    Inception v3 CNN.
+    DenseNet201 CNN.
     """
 
     def __init__(self, data_dir, img_size):
@@ -61,28 +60,40 @@ class ScanDataset(Dataset):
         for target, target_label in enumerate(['neg', 'pos']):
             case_dir = os.path.join(self.data_dir, target_label)
             # Iterate over all images in the class/case type.
-            for fname in os.listdir(case_dir):
-                if '.bmp' in fname:
-                    fpath = os.path.join(case_dir, fname)
-                    # Load img from file (bmp).
-                    img_arr = imread(fpath, as_gray=True)
+            for folder in os.listdir(case_dir):
+                group = []
+                for fname in os.listdir(os.path.join(case_dir, folder)):
+                    if '.bmp' in fname:
+                        fpath = os.path.join(case_dir, folder, fname)
+                        # Load img from file (bmp).
+                        img_arr = imread(fpath, as_gray=True)
 
-                    # Normalise image.
-                    img_arr = self.normalize(img_arr)
+                        # Normalise image.
+                        img_arr = self.normalize(img_arr)
 
-                    # Convert to Tensor (PyTorch matrix).
-                    data_tensor = torch.from_numpy(img_arr).cuda()
-                    data_tensor = data_tensor.type(torch.FloatTensor)
+                        # Convert to Tensor (PyTorch matrix).
+                        data_tensor = torch.from_numpy(img_arr).type(
+                            torch.FloatTensor)
 
-                    # Add image channel dimension (to work with the CNN).
-                    data_tensor = torch.unsqueeze(data_tensor, 0)
+                        # Convert to a 4D tensor for resize operation.
+                        data_tensor = data_tensor.unsqueeze(0).unsqueeze(0)
 
-                    # Resize image.
-                    data_tensor = transforms.Resize(
-                        (self.img_size, self.img_size))(data_tensor)
+                        # Resize image.
+                        data_tensor = transforms.Resize(
+                            (self.img_size, self.img_size))(data_tensor)
 
-                    # Append label to list.
-                    labels.append((data_tensor, target))
+                        # Remove extra dimensions.
+                        data_tensor = data_tensor.squeeze(0).squeeze(0)
+
+                        group.append(data_tensor)
+
+                # Create RGB image tensor with the 3 images as channels.
+                data = torch.stack(group, dim=0)
+                data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+
+                # Create tuple of data and label and append to list.
+                label = (data, target)
+                labels.append(label)
 
         self.labels = labels
 
@@ -146,15 +157,15 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements Inception v3 with single-channel input.
+        Implements DenseNet201 with 3-channel input.
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\inception_single"
-    save_file = "E:\\data\\output\\nets\\inception_single.pth"
-    file_name = "inception_single.txt"
-    folder = "inception_single"
+    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
+    results_path = "E:\\data\\output\\results\\densenet_scantype"
+    save_file = "E:\\data\\output\\nets\\densenet_scantype.pth"
+    file_name = "densenet_scantype.txt"
+    folder = "densenet_scantype"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -230,19 +241,11 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = inception_v3(weights=None)
+    net = densenet201(weights=None)
 
-    # Modify the first convolutional layer to accept one channel input.
-    net.Conv2d_1a_3x3.conv = nn.Conv2d(1, 32, kernel_size=(3, 3),
-                                       stride=(2, 2), bias=False)
-
-    # Modify all other convolutional layers to accept one channel input.
-    for name, module in net.named_modules():
-        if isinstance(module, nn.Conv2d):
-            if name != 'Conv2d_1a_3x3':
-                module.in_channels = 1
-                module.weight.data[:, :, 0, :] = module.weight.data.mean(dim=2)
-                module.padding_mode = 'zeros'
+    # This network takes a 3 channel input.
+    net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
+                          stride=(2, 2), padding=(3, 3), bias=False)
 
     # Casts CNN to run on device.
     net = net.to(device)
