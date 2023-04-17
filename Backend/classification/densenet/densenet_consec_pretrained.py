@@ -1,5 +1,5 @@
 """ This module implements a pretrained DenseNet201
-with a three channel input (3 consecutives images).
+with a three channel input (3 consecutive images).
 It trains, validates and tests a DenseNet201 classification
 CNN on Breast Cancer MRI scan slices, then calculates
 results for performance.
