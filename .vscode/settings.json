@@ -1,7 +1,4 @@
 {
     "python.linting.pycodestyleEnabled": true,
     "python.linting.pylintEnabled": true,
-    "python.analysis.extraPaths": [
-        "./Backend/evaluation"
-    ]
 }
