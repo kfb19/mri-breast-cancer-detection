@@ -79,9 +79,15 @@ class Evaluation():
             (true_positives + true_negatives + false_positives +
              false_negatives)
         # Calculate negative predicted value.
-        self.npv = true_negatives / (true_negatives + false_negatives)
+        if true_negatives + false_negatives == 0:
+            self.npv = "No negative predictions. NPV not possible.\n"
+        else:
+            self.npv = true_negatives / (true_negatives + false_negatives)
         # Caluclate positive predicted value.
-        self.ppv = true_positives / (true_positives + false_positives)
+        if true_positives + false_positives == 0:
+            self.ppv = "No positive predictions. PPV not possible.\n"
+        else:
+            self.ppv = true_positives / (true_positives + false_positives)
         # Calculate sensitivity.
         self.sensitivity = true_positives / (true_positives + false_negatives)
         # Calculate specificity.
