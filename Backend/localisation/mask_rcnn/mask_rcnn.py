@@ -54,7 +54,6 @@ class ScanDataset(Dataset):
             data_dir: the directory of the data
             img_size: the size of the images needed for CNN input
         """
-
         labels = []
         print('Building dataset labels...')
 
@@ -101,8 +100,8 @@ class ScanDataset(Dataset):
 
                         # Create a dictionary to store the target data
                         target = {
-                            'boxes': [[xmin, ymin, xmax, ymax]],
-                            'labels': [1],
+                            'boxes': torch.tensor([[xmin, ymin, xmax, ymax]]),
+                            'labels': torch.tensor([1]),
                             'image_id': data_tensor,
                             'area': torch.tensor([(xmax - xmin) * (
                                 ymax - ymin)]),
@@ -111,8 +110,8 @@ class ScanDataset(Dataset):
                     else:
                         # Create a dictionary to store the target data
                         target = {
-                            'boxes': [[0, 0, 0, 0]],
-                            'labels': [0],
+                            'boxes': torch.tensor([[0, 0, 0, 0]]),
+                            'labels': torch.tensor([0]),
                             'image_id': data_tensor,
                             'area': torch.tensor([0]),
                             'iscrowd': torch.tensor([0])  # No crowd.
@@ -236,6 +235,8 @@ def main():
     validation_dataset = validation_neg_dataset + validation_pos_dataset
     test_dataset = test_neg_dataset + test_pos_dataset
 
+    print(train_pos_dataset[1])
+
     # Makes sure CNN training runs on GPU, if available.
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = torch.device("cuda") if torch.cuda.is_available() \
@@ -274,15 +275,15 @@ def main():
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
                           stride=(2, 2), padding=(3, 3), bias=False)
 
-    # Casts CNN to run on device.
+    # Casts Mask R-CNN to run on device.
     net = net.to(device)
 
-    # Defines criterion to compute the cross-entropy loss.
-    criterion = nn.CrossEntropyLoss()
+    # Defines criterion to compute the Mask R-CNN loss.
+    criterion = maskrcnn_loss()
     criterion = criterion.to(device)
 
-    # Sets the error minimiser with a learning rate of 0.001.
-    error_minimizer = torch.optim.SGD(net.parameters(), lr=0.001)
+    # Sets the error minimizer with a learning rate of 0.001.
+    error_minimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
     # Defines epoch number.
     epochs = 100
@@ -325,16 +326,21 @@ def main():
 
         # Iterate over the training set once.
         for batch_index, (inputs, targets) in tqdm(enumerate(train_loader),
-                                                   total=len(train_dataset) //
-                                                   train_batchsize):
+                                                total=len(train_dataset) //
+                                                train_batchsize):
             # Load the data onto the computation device.
             # Inputs are a Tensor of shape:
             # (batch size, number of channels, image height, image width).
-            # Targets are a Tensor of one-hot-encoded class
-            # labels for the inputs,
-            # of shape (batch size, number of classes).
+            # Targets are a list of dictionaries, one for each image in the batch.
+            # Each dictionary contains:
+            #   - "boxes": a Tensor of shape (number of objects in the image, 4)
+            #              containing the ground-truth bounding boxes for each object.
+            #   - "labels": a Tensor of shape (number of objects in the image,)
+            #               containing the class labels for each object.
+            #   - "masks": a Tensor of shape (number of objects in the image, image_height, image_width)
+            #              containing the binary segmentation masks for each object.
             inputs = inputs.to(device)
-            targets = targets.to(device)
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
             # Reset changes (gradients) to parameters.
             error_minimizer.zero_grad()
@@ -345,88 +351,48 @@ def main():
 
             # Evaluate the error.
             # Estimate how much to change the network parameters.
-            loss = criterion(predictions, targets)
+            loss_dict = criterion(predictions, targets)
+            loss = sum(loss for loss in loss_dict.values())
             loss = loss.to(device)
             loss_total = loss_total + loss.item()
-            counter = counter + 1
+            counter = counter +
+                optimizer.zero_grad()
             loss.backward()
+            optimizer.step()
 
-            # Change parameters.
-            error_minimizer.step()
+            # Update the training progress bar.
+            train_bar.set_postfix(loss=loss_total / (
+                batch_idx + 1), acc=100. * correct / total)
 
-            # Calculate predicted class label.
-            # The .max() method returns the maximum entries, and their indices.
-            # Need the index with the highest probability.
-            # Not the probability itself.
-            _, predicted_class = predictions.max(1)
-            total_train_examples += predicted_class.size(0)
-            num_correct_train += predicted_class.eq(targets).sum().item()
-
-        # Get results:
-        # Loss:
-        average_loss = loss_total / counter
-        losses.append(average_loss)
-
-        # Total prediction accuracy of network on training set.
-        train_acc = num_correct_train / total_train_examples
-        print(f"Training accuracy: {train_acc}")
-        train_accs.append(train_acc)
-
-        # Predict on validation set (similar to training set):
-        total_val_examples = 0
-        num_correct_val = 0
-        val_loss_total = 0
-        val_counter = 0
-
-        # Switch network from training mode (parameters can be trained),
-        # to evaluation mode (parameters can't be trained).
+        # Evaluate the performance of the network on the validation set.
         net.eval()
-
+        val_loss_total = 0
+        val_correct = 0
+        val_total = 0
         with torch.no_grad():
-            # Don't save parameter changes,
-            # since this is not for training.
-            for batch_index, (inputs, targets) in \
-                tqdm(enumerate(validation_loader),
-                     total=len(validation_dataset)//eval_batchsize):
-                inputs = inputs.to(device)
-                net = net.to(device)
-                targets = targets.to(device)
+            for batch_idx, (inputs, targets) in enumerate(validation_loader):
+                inputs, targets = inputs.to(device), targets.to(device)
+
                 predictions = net(inputs)
-                _, predicted_class = predictions.max(1)
-                total_val_examples += predicted_class.size(0)
-                num_correct_val += predicted_class.eq(targets).sum().item()
-                val_loss = criterion(predictions, targets)
-                val_loss = val_loss.to(device)
-                val_loss_total = val_loss_total + val_loss.item()
-                val_counter = val_counter + 1
+                loss_dict = criterion(predictions, targets)
+                loss = sum(loss for loss in loss_dict.values())
+                loss = loss.to(device)
+                val_loss_total = val_loss_total + loss.item()
 
-        # Get results:
-        # Total prediction accuracy of network on validation set.
-        val_acc = num_correct_val / total_val_examples
-        print(f"Validation accuracy: {val_acc}")
-        val_accs.append(val_acc)
+                # Compute the accuracy of the network on the validation set.
+                _, predicted = torch.max(predictions.data, 1)
+                val_correct += (predicted == targets).sum().item()
+                val_total += targets.size(0)
 
-        # Save validation loss.
-        val_average_loss = val_loss_total / val_counter
-        val_losses.append(val_average_loss)
+        # Update the validation progress bar.
+        val_bar.set_postfix(loss=val_loss_total / len(
+            validation_loader), acc=100. * val_correct / val_total)
 
-        # Save model if the validation accuracy is the best so far.
-        if val_acc > best_validation_accuracy:
-            best_validation_accuracy = val_acc
-            print("Validation accuracy improved; saving model.")
-            net_final = deepcopy(net)
-            net_final = net_final.to(device)
+        # Save the model checkpoint if the validation accuracy has improved.
+        if val_correct > best_val_acc:
+            best_val_acc = val_correct
+            torch.save(net.state_dict(), 'mask.pth')
 
-            # Save final CNN in the specified filepath.
-            torch.save(net_final.state_dict(), save_file)
-
-        # For graph calculations later if early stopping happens.
-        epoch_counter = epoch_counter + 1
-
-        # Check via early stopping if the CNN is overfitting.
-        if early_stopper.early_stop(val_average_loss):
-            print("Early stopping...")
-            break
 
     # Sort epochs for graph.
     epoch_list = list(range(epoch_counter))

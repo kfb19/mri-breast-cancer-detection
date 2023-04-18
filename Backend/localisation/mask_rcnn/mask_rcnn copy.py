@@ -1,6 +1,6 @@
-""" This module implements ResNet50 with a single
+""" This module implements Mask R-CNN with a single
 input channel (as images are greyscale). It trains,
-validates and tests a ResNet50 classification CNN
+validates and tests a Mask R-CNN classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
@@ -9,12 +9,13 @@ import random
 import os
 from copy import deepcopy
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 import torch
+import torchvision
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torchvision.models import resnet50
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -27,7 +28,7 @@ from early_stopper import EarlyStopper
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
-    Resnet50 CNN.
+    Mask R-CNN CNN.
     """
 
     def __init__(self, data_dir, img_size):
@@ -67,6 +68,7 @@ class ScanDataset(Dataset):
             # Iterate over all images in the class/case type.
             for fname in os.listdir(case_dir):
                 if '.bmp' in fname:
+                    dict_t = {}
                     fpath = os.path.join(case_dir, fname)
                     # Load img from file (bmp).
                     img_arr = imread(fpath, as_gray=True)
@@ -84,7 +86,7 @@ class ScanDataset(Dataset):
                     # Resize image.
                     data_tensor = transforms.Resize(
                         (self.img_size, self.img_size))(data_tensor)
-
+                    
                     if target_label == 'pos':
 
                         # Find the corresponding bounding box data for image.
@@ -98,28 +100,42 @@ class ScanDataset(Dataset):
                         ymax = bbox_row['ymax'].values[0]
 
                         # Create a dictionary to store the target data
-                        target = {
-                            'boxes': torch.tensor([[xmin, ymin, xmax, ymax]]),
+                        dict_t = {
+                            'boxes': torch.tensor([xmin, ymin, xmax, ymax]),
                             'labels': torch.tensor([1]),
-                            'image_id': data_tensor,
                             'area': torch.tensor([(xmax - xmin) * (
                                 ymax - ymin)]),
                             'iscrowd': torch.tensor([0])  # No crowd.
                         }
                     else:
                         # Create a dictionary to store the target data
-                        target = {
-                            'boxes': torch.tensor([[0, 0, 0, 0]]),
+                        dict_t = {
+                            'boxes': torch.tensor([0, 0, 0, 0]),
                             'labels': torch.tensor([0]),
-                            'image_id': data_tensor,
                             'area': torch.tensor([0]),
                             'iscrowd': torch.tensor([0])  # No crowd.
                         }
 
                     # Append label to list.
-                    labels.append((data_tensor, target))
+                    labels.append((data_tensor, dict_t))
 
         self.labels = labels
+
+    def normalize(self, img):
+        """ Normalises image pixel values to range [0, 255].
+
+        Args:
+            img: the array for each image/scan.
+        Returns:
+            img: the edited array for each image/scan.
+        """
+
+        # Convert uint16 -> float.
+        img = img.astype(float) * 255. / img.max()
+        # Convert float -> unit8.
+        img = img.astype(np.uint8)
+
+        return img
 
     def __getitem__(self, idx):
         """ Required method for accessing data samples.
@@ -165,15 +181,15 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements ResNet50 with single-channel input.
+        Implements Mask R-CNN with single-channel input.
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single"
-    save_file = "E:\\data\\output\\nets\\resnet50_single.pth"
-    file_name = "resnet50_single.txt"
-    folder = "resnet50_single"
+    data_dir = 'E:\\data\\output\\bmp_out_single_localise'
+    results_path = "E:\\data\\output\\results\\mask_single"
+    save_file = "E:\\data\\output\\nets\\mask_single.pth"
+    file_name = "mask_single.txt"
+    folder = "mask_single"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -198,7 +214,8 @@ def main():
     neg_dataset = []
     pos_dataset = []
     for scan_slice in dataset:
-        if scan_slice[1] == 0:
+        label = scan_slice[1]['labels'][0]
+        if label == 0:
             neg_dataset.append(scan_slice)
         else:
             pos_dataset.append(scan_slice)
@@ -217,6 +234,8 @@ def main():
     validation_dataset = validation_neg_dataset + validation_pos_dataset
     test_dataset = test_neg_dataset + test_pos_dataset
 
+    # print(train_pos_dataset[1])
+
     # Makes sure CNN training runs on GPU, if available.
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = torch.device("cuda") if torch.cuda.is_available() \
@@ -224,7 +243,7 @@ def main():
     print(f"Running on {device}\n")
 
     # Defines batch sizes.
-    train_batchsize = 32  # Depends on computation hardware.
+    train_batchsize = 2  # Depends on computation hardware.
     eval_batchsize = 16  # Can be small due to small dataset size.
 
     # Loads images for training in a random order.
@@ -249,7 +268,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = resnet50(weights=None)
+    net = torchvision.models.detection.maskrcnn_resnet50_fpn(weights=None)
 
     # This network takes single channel input.
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
@@ -315,14 +334,14 @@ def main():
             # labels for the inputs,
             # of shape (batch size, number of classes).
             inputs = inputs.to(device)
-            targets = targets.to(device)
+            # targets = targets.to(device)
 
             # Reset changes (gradients) to parameters.
             error_minimizer.zero_grad()
 
             # Get the network's predictions on the training set batch.
             net = net.to(device)
-            predictions = net(inputs)
+            predictions = net(inputs, [targets])
 
             # Evaluate the error.
             # Estimate how much to change the network parameters.
@@ -372,7 +391,7 @@ def main():
                 inputs = inputs.to(device)
                 net = net.to(device)
                 targets = targets.to(device)
-                predictions = net(inputs)
+                predictions = net.eval()
                 _, predicted_class = predictions.max(1)
                 total_val_examples += predicted_class.size(0)
                 num_correct_val += predicted_class.eq(targets).sum().item()
