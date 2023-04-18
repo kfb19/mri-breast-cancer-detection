@@ -102,7 +102,7 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
         return img_path  # For bounding box data.
 
 
-def save_bounding_box_data(target_dir, label, img_id, volume, boxes):
+def save_bounding_box_data(label, img_id, volume, boxes, csv_path):
     """ Saves data on the bounding boxes in a .csv.
 
     Args:
@@ -111,16 +111,12 @@ def save_bounding_box_data(target_dir, label, img_id, volume, boxes):
         img_id: a specific ID for that image
         volume: patient index number
         boxes: the bounding box data
+        csv_path: the path for the csv file
     """
     if label == 1:
         cancer_status = 'pos'
     else:
         cancer_status = 'neg'
-    bb_path = os.path.join(target_dir, "bounding_boxes")
-    csv_path = os.path.join(bb_path, "bounding_boxes.csv")
-    # If no path exists, make one.
-    if not os.path.exists(bb_path):
-        os.makedirs(bb_path)
 
     annotation_info = [img_id]
 
@@ -138,13 +134,13 @@ def save_bounding_box_data(target_dir, label, img_id, volume, boxes):
 
         annotation_info.append(label)
 
-        # Open a .csv file for writing in 'write' mode.
         # Open a .csv file for writing in 'append' mode.
-    with open(csv_path, mode='a', encoding='utf-8', newline='') as csv_file:
-        # Create a .csv writer object.
-        writer = csv.writer(csv_file)
-        writer.writerow(annotation_info)
-        csv_file.close()
+        with open(csv_path, mode='a', encoding='utf-8',
+                  newline='') as csv_file:
+            # Create a .csv writer object.
+            writer = csv.writer(csv_file)
+            writer.writerow(annotation_info)
+            csv_file.close()
 
 
 def main():
@@ -161,6 +157,19 @@ def main():
 
     # Setting the bounding boxes and dicom data variables.
     boxes, data = read_data(boxes_path, mapping_path)
+
+    bb_path = os.path.join(target_bmp_dir, "bounding_boxes")
+    # If no path exists, make one.
+    if not os.path.exists(bb_path):
+        os.makedirs(bb_path)
+    csv_path = os.path.join(bb_path, "bounding_boxes.csv")
+    # Open a .csv file for writing in 'append' mode.
+    with open(csv_path, mode='a', encoding='utf-8', newline='') as csv_file:
+        # Create a .csv writer object.
+        header_info = ['image_id', 'xmin', 'ymin', 'xmax', 'ymax', 'label']
+        writer = csv.writer(csv_file)
+        writer.writerow(header_info)
+    csv_file.close()
 
     # Image extraction.
 
@@ -197,7 +206,7 @@ def main():
                 continue
             img_id = save_dicom_to_bitmap(dcm_fname, 1, vol_index,
                                           target_bmp_dir)
-            save_bounding_box_data(target_bmp_dir, 1, img_id, vol_index, boxes)
+            save_bounding_box_data(1, img_id, vol_index, boxes, csv_path)
             pos_extracted += 1
 
         # Determine slice label -> 0 if negative.
@@ -207,7 +216,7 @@ def main():
                 continue
             img_id = save_dicom_to_bitmap(dcm_fname, 0, vol_index,
                                           target_bmp_dir)
-            save_bounding_box_data(target_bmp_dir, 1, img_id, vol_index, boxes)
+            save_bounding_box_data(0, img_id, vol_index, boxes, csv_path)
             neg_extracted += 1
 
 
