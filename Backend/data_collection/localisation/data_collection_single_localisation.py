@@ -84,7 +84,7 @@ def save_dicom_to_bitmap(dicom_filename, label, patient_index, target_bmp_dir):
         img = dicom.pixel_array
 
         # Convert uint16 datatype to float, scaled properly for uint8.
-        img = img.astype(np.float) * 255. / img.max()
+        img = img.astype(np.float64) * 255. / img.max()
 
         # Convert from float -> uint8.
         img = img.astype(np.uint8)
