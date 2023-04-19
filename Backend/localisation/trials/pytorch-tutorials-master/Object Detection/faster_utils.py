@@ -319,7 +319,7 @@ def get_req_anchors(anc_boxes_all, gt_bboxes_all, gt_classes_all,
 def display_img(img_data, fig, axes):
     """ DOCSTRING """
     for i, img in enumerate(img_data):
-        if isinstance(img) == torch.Tensor:
+        if isinstance(img, torch.Tensor):
             img = img.permute(1, 2, 0).numpy()
         axes[i].imshow(img)
 
@@ -329,7 +329,7 @@ def display_img(img_data, fig, axes):
 def display_bbox(bboxes, fig, axis, classes=None, in_format='xyxy', color='y',
                  line_width=3):
     """ DOCSTRING """
-    if isinstance(bboxes) == np.ndarray:
+    if isinstance(bboxes, np.ndarray):
         bboxes = torch.from_numpy(bboxes)
     if classes:
         assert len(bboxes) == len(classes)

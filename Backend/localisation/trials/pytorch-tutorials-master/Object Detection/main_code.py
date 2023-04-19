@@ -92,6 +92,8 @@ class ObjectDetectionDataset(Dataset):
         # stack all images
         img_data_stacked = torch.stack(img_data_all, dim=0)
 
+        img_data_stacked.to("cuda")
+
         return img_data_stacked.to(dtype=torch.float32), \
             gt_bboxes_pad, gt_classes_pad
 
@@ -106,7 +108,12 @@ def main():
     annotation_path += "Backend\\localisation\\trials\\"
     annotation_path += "pytorch-tutorials-master\\Object Detection\\"
     annotation_path += "data\\annotations.xml"
-    image_dir = os.path.join("data", "images")
+    image_dir = "c:\\Users\\kate\\OneDrive\\Desktop\\"
+    image_dir += "University\\Final-Year-Project\\"
+    image_dir += "breast-cancer-detection-localisation\\"
+    image_dir += "Backend\\localisation\\trials\\"
+    image_dir += "pytorch-tutorials-master\\Object Detection\\"
+    image_dir += "data\\images"
     name2idx = {'pad': -1, 'camel': 0, 'bird': 1}
     idx2name = {v: k for k, v in name2idx.items()}
 
@@ -138,6 +145,7 @@ def main():
     fig, axes = display_img(img_data_all, fig, axes)
     fig, _ = display_bbox(gt_bboxes_all[0], fig, axes[0], classes=gt_class_1)
     fig, _ = display_bbox(gt_bboxes_all[1], fig, axes[1], classes=gt_class_2)
+    plt.show()
 
     model = torchvision.models.resnet50(pretrained=True)
 
@@ -165,6 +173,7 @@ def main():
     filters_data = [filters[0].detach().numpy() for filters in out[:2]]
 
     fig, axes = display_img(filters_data, fig, axes)
+    plt.show()
 
     anc_pts_x, anc_pts_y = gen_anc_centers(out_size=(out_h, out_w))
 
@@ -178,6 +187,7 @@ def main():
     fig, axes = display_img(img_data_all, fig, axes)
     fig, _ = display_grid(anc_pts_x_proj, anc_pts_y_proj, fig, axes[0])
     fig, _ = display_grid(anc_pts_x_proj, anc_pts_y_proj, fig, axes[1])
+    plt.show()
 
     anc_scales = [2, 4, 6]
     anc_ratios = [0.5, 1, 1.5]
@@ -195,6 +205,7 @@ def main():
     fig, axes = plt.subplots(nrows, ncols, figsize=(16, 8))
 
     fig, axes = display_img(img_data_all, fig, axes)
+    plt.show()
 
     # project anchor boxes to the image
     anc_boxes_proj = project_bboxes(
@@ -214,22 +225,26 @@ def main():
                                     anc_pts_y_proj[sp_2[1]]))
     fig, _ = display_bbox(bboxes_1, fig, axes[0])
     fig, _ = display_bbox(bboxes_2, fig, axes[1])
+    plt.show()
 
     nrows, ncols = (1, 2)
     fig, axes = plt.subplots(nrows, ncols, figsize=(16, 8))
 
     fig, axes = display_img(img_data_all, fig, axes)
+    plt.show()
 
     # plot feature grid
     fig, _ = display_grid(anc_pts_x_proj, anc_pts_y_proj, fig, axes[0])
     fig, _ = display_grid(anc_pts_x_proj, anc_pts_y_proj, fig, axes[1])
+    plt.show()
 
     # plot all anchor boxes
-    for x in range(anc_pts_x_proj.size(dim=0)):
-        for y in range(anc_pts_y_proj.size(dim=0)):
-            bboxes = anc_boxes_proj[0][x, y]
+    for x_val in range(anc_pts_x_proj.size(dim=0)):
+        for y_val in range(anc_pts_y_proj.size(dim=0)):
+            bboxes = anc_boxes_proj[0][x_val, y_val]
             fig, _ = display_bbox(bboxes, fig, axes[0], line_width=1)
             fig, _ = display_bbox(bboxes, fig, axes[1], line_width=1)
+    plt.show()
 
     pos_thresh = 0.7
     neg_thresh = 0.3
@@ -280,6 +295,8 @@ def main():
     fig, _ = display_bbox(neg_anc_1, fig, axes[0], color='r')
     fig, _ = display_bbox(neg_anc_2, fig, axes[1], color='r')
 
+    plt.show()
+
     img_size = (img_height, img_width)
     out_size = (out_h, out_w)
     n_classes = len(name2idx) - 1  # exclude pad idx
@@ -295,7 +312,6 @@ def main():
     def training_loop(model, learning_rate, train_dataloader, n_epochs):
         """ DOCSTRING """
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
         model.train()
         loss_list = []
 
@@ -318,8 +334,8 @@ def main():
 
         return loss_list
 
-    learning_rate = 1e-3
-    n_epochs = 1000
+    learning_rate = 0.001
+    n_epochs = 100
 
     loss_list = training_loop(detector, learning_rate, od_dataloader, n_epochs)
 
@@ -349,6 +365,7 @@ def main():
     fig, axes = display_img(img_batch, fig, axes)
     fig, _ = display_bbox(prop_proj_1, fig, axes[0], classes=classes_pred_1)
     fig, _ = display_bbox(prop_proj_2, fig, axes[1], classes=classes_pred_2)
+    plt.show()
 
 
 if __name__ == "__main__":
