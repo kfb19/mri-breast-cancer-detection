@@ -72,13 +72,18 @@ class ObjectDetectionDataset(Dataset):
             img = io.imread(img_path)
             img = resize(img, self.img_size)
 
+            # check if image is grayscale and add extra dimension if necessary
+            if len(img.shape) == 2:
+                img = np.expand_dims(img, axis=2)
+
             # convert image to torch tensor and reshape it so
             # channels come first
             img_tensor = torch.from_numpy(img).permute(2, 0, 1)
+            img_tensor = torch.unsqueeze(img_tensor, dim=0)
 
             # encode class names as integers
             gt_classes = gt_classes_all[i]
-            gt_idx = torch.Tensor([self.name2idx[name] for name in gt_classes])
+            gt_idx = torch.Tensor([1])
 
             img_data_all.append(img_tensor)
             gt_idxs_all.append(gt_idx)
@@ -92,29 +97,20 @@ class ObjectDetectionDataset(Dataset):
         # stack all images
         img_data_stacked = torch.stack(img_data_all, dim=0)
 
-        img_data_stacked.to("cuda")
-
         return img_data_stacked.to(dtype=torch.float32), \
             gt_bboxes_pad, gt_classes_pad
 
 
 def main():
     """ DOCSTRING """
-    img_width = 640
-    img_height = 480
-    annotation_path = "c:\\Users\\kate\\OneDrive\\Desktop\\"
-    annotation_path += "University\\Final-Year-Project\\"
-    annotation_path += "breast-cancer-detection-localisation\\"
-    annotation_path += "Backend\\localisation\\trials\\"
-    annotation_path += "pytorch-tutorials-master\\Object Detection\\"
-    annotation_path += "data\\annotations.xml"
-    image_dir = "c:\\Users\\kate\\OneDrive\\Desktop\\"
-    image_dir += "University\\Final-Year-Project\\"
-    image_dir += "breast-cancer-detection-localisation\\"
-    image_dir += "Backend\\localisation\\trials\\"
-    image_dir += "pytorch-tutorials-master\\Object Detection\\"
-    image_dir += "data\\images"
-    name2idx = {'pad': -1, 'camel': 0, 'bird': 1}
+    img_width = 128
+    img_height = 128
+
+    image_dir = "E:\\data\\output\\bmp_out_single_localise\\"
+    annotation_path = os.path.join(image_dir,
+                                   "bounding_boxes\\bounding_boxes.csv")
+    image_dir = os.path.join(image_dir, "pos")
+    name2idx = {'pad': -1, 'pos': 1}
     idx2name = {v: k for k, v in name2idx.items()}
 
     od_dataset = ObjectDetectionDataset(
@@ -148,6 +144,9 @@ def main():
     plt.show()
 
     model = torchvision.models.resnet50(pretrained=True)
+    # Modify the first convolutional layer to accept a single-channel input
+    model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2,
+                            padding=3, bias=False)
 
     req_layers = list(model.children())[:8]
     backbone = nn.Sequential(*req_layers)
@@ -157,6 +156,8 @@ def main():
         param[1].requires_grad = True
 
     # run the image through the backbone
+    img_data_all = img_data_all.squeeze(1)  # remove the extra dimensions
+    print(img_data_all.shape)
     out = backbone(img_data_all)
 
     out_c, out_h, out_w = out.size(dim=1), out.size(dim=2), out.size(dim=3)
@@ -212,8 +213,8 @@ def main():
         anc_boxes_all, width_scale_factor, height_scale_factor, mode='a2p')
 
     # plot anchor boxes around selected anchor points
-    sp_1 = [5, 8]
-    sp_2 = [12, 9]
+    sp_1 = [2, 3]
+    sp_2 = [0, 1]
     bboxes_1 = anc_boxes_proj[0][sp_1[0], sp_1[1]]
     bboxes_2 = anc_boxes_proj[1][sp_2[0], sp_2[1]]
 
@@ -260,6 +261,7 @@ def main():
             pos_thresh, neg_thresh)
 
     # project anchor coords to the image space
+    print(positive_anc_coords)
     pos_anc_proj = project_bboxes(
         positive_anc_coords, width_scale_factor,
         height_scale_factor, mode='a2p')
