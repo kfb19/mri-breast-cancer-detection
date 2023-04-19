@@ -34,7 +34,7 @@ def main():
         os.makedirs(labels_path)
 
     # set the output size of the resized images
-    output_size = (128, 128)
+    output_size = (448, 448)
     # total img counter CHANGE ME
     counter = 0
     total_images = 500
