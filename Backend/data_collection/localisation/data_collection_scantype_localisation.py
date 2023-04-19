@@ -120,7 +120,7 @@ def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
 
             img_count += 1
 
-            return img_path  # For bounding box data.
+    return img_path  # For bounding box data.
 
 
 def save_bounding_box_data(label, img_id, volume, boxes, csv_path):
