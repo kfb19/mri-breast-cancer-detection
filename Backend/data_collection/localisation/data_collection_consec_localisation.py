@@ -108,7 +108,7 @@ def save_dicom_to_bitmap(array_of_three, label, patient_index, target_bmp_dir,
 
             print("New image saved")
 
-    return img_path  # For bounding box data.
+    return triple_count  # For bounding box data.
 
 
 def determine_pos_neg(slice_indexes, start, end):
