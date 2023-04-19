@@ -202,7 +202,7 @@ def main():
     # Image extraction.
 
     # Number of examples for each class.
-    n_class = 500  # CHANGE ME!!!!
+    n_class = 600  # CHANGE ME!!!!
     # Counts of examples extracted from each class.
     neg_extracted = 0
     pos_extracted = 0
