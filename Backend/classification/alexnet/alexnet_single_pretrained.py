@@ -15,6 +15,7 @@ from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.models import alexnet
+from torchvision.models import AlexNet_Weights
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -151,10 +152,10 @@ def main():
 
     # Directory information.
     data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\mobile_single"
-    save_file = "E:\\data\\output\\nets\\mobile_single.pth"
-    file_name = "mobile_single.txt"
-    folder = "mobile_single"
+    results_path = "E:\\data\\output\\results\\alexnet_single_pretrained"
+    save_file = "E:\\data\\output\\nets\\alexnet_single_pretrained.pth"
+    file_name = "alexnet_single_pretrained.txt"
+    folder = "alexnet_single_pretrained"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -230,7 +231,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = alexnet(weights=None)
+    net = alexnet(weights=AlexNet_Weights.IMAGENET1K_V1)
 
     # This network takes single channel input.
     net.features[0] = nn.Conv2d(1, 64, kernel_size=(11, 11), stride=(4, 4),
