@@ -270,6 +270,7 @@ def main():
 
     # Set early stopping variable.
     early_stopper = EarlyStopper(patience=10, min_delta=0)
+    epoch_counter = 0
 
     # Training loop.
     for epoch in range(epochs):
