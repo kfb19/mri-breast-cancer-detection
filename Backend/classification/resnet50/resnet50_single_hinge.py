@@ -12,7 +12,6 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from torch import nn
-import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.models import resnet50
