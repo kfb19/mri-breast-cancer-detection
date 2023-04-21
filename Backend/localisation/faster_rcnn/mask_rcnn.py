@@ -108,8 +108,8 @@ class ScanDataset(Dataset):
                 # Create a dictionary to store the target data
                 target = {
                     'boxes': torch.tensor([[xmin, ymin, xmax, ymax]],
-                                          device='cpu'),
-                    'labels': torch.tensor([1], device='cpu'),
+                                          device='cuda'),
+                    'labels': torch.tensor([1], device='cuda'),
                 }
 
                 # Create RGB image tensor with the 3 images as channels.
@@ -174,7 +174,7 @@ class FasterRCNNLoss(torch.nn.Module):
                 anchors, targets):
         """ DOCSTRING """
         # Calculate the classification loss
-        classification_loss = torch.nn.MultiLabelSoftMarginLoss()(
+        classification_loss = torchvision.ops.MultiLabelSoftMarginLoss()(
             classification_output, targets[:, :, :-4])
 
         # Calculate the localization loss
@@ -219,7 +219,7 @@ def validate(net, criterion, validation_loader, device):
             loss_dict = criterion(outputs, labels)
             loss = sum(loss for loss in loss_dict.values())
             val_loss += loss.item()
-            num_correct += get_num_correct(net, validation_loader)
+            num_correct += get_num_correct(outputs, labels)
             total_examples += len(labels)
     val_accuracy = num_correct / total_examples
     return val_loss, val_accuracy
@@ -239,97 +239,31 @@ def test(net, criterion, test_loader, device):
             loss_dict = criterion(outputs, labels)
             loss = sum(loss for loss in loss_dict.values())
             test_loss += loss.item()
-            num_correct += get_num_correct(net, test_loader)
+            num_correct += get_num_correct(outputs, labels)
             total_examples += len(labels)
     test_accuracy = num_correct / total_examples
     return test_loss, test_accuracy
 
 
-def box_iou(box1, box2):
+def get_num_correct(outputs, labels):
     """
-    Calculates IoU of two bounding boxes.
+    Counts the number of correct predictions.
 
     Args:
-        box1 (torch.Tensor): bounding box of shape (4,) in format
-        (x1, y1, x2, y2)
-        box2 (torch.Tensor): bounding box of shape (4,) in format
-        (x1, y1, x2, y2)
-
-    Returns:
-        float: IoU of the two bounding boxes
-    """
-    x1, y1, x2, y2 = box1
-    xx1, yy1, xx2, yy2 = box2
-
-    area1 = (x2 - x1) * (y2 - y1)
-    area2 = (xx2 - xx1) * (yy2 - yy1)
-
-    inter_x1 = max(x1, xx1)
-    inter_y1 = max(y1, yy1)
-    inter_x2 = min(x2, xx2)
-    inter_y2 = min(y2, yy2)
-
-    inter_area = max(inter_x2 - inter_x1, 0) * max(inter_y2 - inter_y1, 0)
-
-    iou = inter_area / (area1 + area2 - inter_area)
-
-    return iou
-
-
-def get_num_correct(model, data_loader, iou_threshold=0.5):
-    """
-    Counts the number of correct predictions for Faster R-CNN.
-
-    Args:
-        model (torch.nn.Module): trained Faster R-CNN model
-        data_loader (torch.utils.data.DataLoader): data loader for the dataset
-        iou_threshold (float, optional): IoU threshold for considering a detection as correct.
-            Default is 0.5.
+        outputs (torch.Tensor): predicted outputs of shape
+        (batch_size, num_classes)
+        labels (torch.Tensor): true labels of shape (batch_size)
 
     Returns:
         int: number of correct predictions
     """
-    num_correct = 0
+    # get the predicted classes from the outputs tensor
+    _, predicted = torch.max(outputs, dim=1)
 
-    for images, targets in data_loader:
-        # feed images to the model and obtain the output dict
-        model.eval()
-        with torch.no_grad():
-            outputs = model(images)
-
-        # extract predicted class scores, predicted box regression offsets, 
-        # and ground-truth target labels and target box regression offsets
-        scores = outputs['classifier']
-        regressions = outputs['regressor']
-        labels = [t['labels'] for t in targets]
-        gt_boxes = [t['boxes'] for t in targets]
-
-        # decode predicted box regression offsets using model's anchor boxes
-        anchors = model.anchor_generator(images)
-        pred_boxes = model.box_coder.decode(regressions, anchors)
-
-        # compute IoU between predicted and ground-truth boxes
-        batch_size = len(images)
-        for i in range(batch_size):
-            gt_boxes_i = gt_boxes[i]
-            scores_i = scores[i]
-            pred_boxes_i = pred_boxes[i]
-
-            if len(gt_boxes_i) == 0:
-                continue
-
-            iou = box_iou(pred_boxes_i, gt_boxes_i)
-
-            # classify a predicted box as correct if its predicted class 
-            # is the same as the ground-truth class and its
-            # IoU is above the threshold
-            max_iou, max_idx = iou.max(dim=1)
-            correct_mask = (scores_i.argmax(dim=1) == labels[i][max_idx]) & (
-                max_iou >= iou_threshold)
-            num_correct += correct_mask.sum().item()
+    # compare the predicted classes to the ground-truth labels
+    num_correct = (predicted == labels).sum().item()
 
     return num_correct
-
 
 
 def create_data_loader(data, batch_size):
@@ -429,7 +363,7 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=None)
+    net = torchvision.models.detection.maskrcnn_resnmet50_fpn(weights=None)
 
     # This network takes a 3 channel input.
     net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
@@ -440,7 +374,6 @@ def main():
 
     # Define criterion to compute the Fast R-CNN loss.
     criterion = FasterRCNNLoss()
-    # criterion = nn.CrossEntropyLoss()
 
     # Cast criterion to run on device.
     criterion = criterion.to(device)
@@ -488,38 +421,19 @@ def main():
         counter = 0
 
         # Iterate over the training set once.
-        """for batch_index, (inputs, labels) in enumerate(train_loader):
+        for batch_index, (inputs, labels) in enumerate(train_loader):
             inputs = inputs.to(device)
             outputs = net(inputs, labels)
-            print(outputs)
             loss_dict = criterion(outputs, labels)
             loss = sum(loss for loss in loss_dict.values())
             loss_total += loss.item()
             error_minimizer.zero_grad()
             loss.backward()
-            error_minimizer.step()"""
-
-        for batch_index, (inputs, labels) in enumerate(train_loader):
-            inputs = inputs.to(device)
-            outputs = net(inputs, labels)
-            loss_classifier = outputs['loss_classifier'].item()
-            loss_box_reg = outputs['loss_box_reg'].item()
-            loss_objectness = outputs['loss_objectness'].item()
-            loss_rpn_box_reg = outputs['loss_rpn_box_reg'].item()
-
-            loss = torch.tensor(0.5 * loss_classifier +
-                                0.5 * loss_box_reg +
-                                0.5 * loss_objectness +
-                                0.5 * loss_rpn_box_reg, requires_grad=True)
-
-            loss_total += loss.item()
-
-            error_minimizer.zero_grad()
-            loss.backward()
             error_minimizer.step()
+
             # Calculate accuracy statistics.
             total_train_examples += len(labels)
-            num_correct_train += get_num_correct(net, train_loader)
+            num_correct_train += get_num_correct(outputs, labels)
 
             # Print loss statistics.
             if batch_index % 100 == 0:
