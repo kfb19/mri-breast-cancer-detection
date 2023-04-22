@@ -1,6 +1,6 @@
-""" This module implements ResNet50 with a single
+""" This module implements a pretrained DenseNet201 with a single
 input channel (as images are greyscale). It trains,
-validates and tests a ResNet50 classification CNN
+validates and tests a DenseNet201 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
@@ -14,7 +14,8 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torchvision.models import resnet50
+from torchvision.models import densenet201
+from torchvision.models import DenseNet201_Weights
 from torchvision.utils import make_grid
 from skimage.io import imread
 import matplotlib.pyplot as plt
@@ -24,10 +25,11 @@ from early_stopper import EarlyStopper
 
 # pylint: disable=E1101
 # pylint: disable=E1102
+# pylint: disable=W0612
 class ScanDataset(Dataset):
     """ This class creates a dataset of images
     from which to train, test and validate the
-    Resnet50 CNN.
+    DenseNet201 CNN.
     """
 
     def __init__(self, data_dir, img_size):
@@ -145,15 +147,15 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements ResNet50 with single-channel input.
+        Implements DenseNet201 with single-channel input.
         """
 
     # Directory information.
     data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single_hinge"
-    save_file = "E:\\data\\output\\nets\\resnet50_single_hinge.pth"
-    file_name = "resnet50_single_hinge.txt"
-    folder = "resnet50_single_hinge"
+    results_path = "E:\\data\\output\\results\\densenet_single_pretrained_multi"
+    save_file = "E:\\data\\output\\nets\\densenet_single_pretrained_multi.pth"
+    file_name = "densenet_single_pretrained_multi.txt"
+    folder = "densenet_single_pretrained_multi"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -205,7 +207,7 @@ def main():
 
     # Defines batch sizes.
     train_batchsize = 32  # Depends on computation hardware.
-    eval_batchsize = 32  # Can be small due to small dataset size.
+    eval_batchsize = 16  # Can be small due to small dataset size.
 
     # Loads images for training in a random order.
     train_loader = DataLoader(train_dataset,
@@ -229,17 +231,22 @@ def main():
     torch.cuda.manual_seed_all(seed)
 
     # Define the convoluted neural network.
-    net = resnet50(weights=None)
+    net = densenet201(weights=DenseNet201_Weights.IMAGENET1K_V1)
 
     # This network takes single channel input.
-    net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
-                          stride=(2, 2), padding=(3, 3), bias=False)
+    net.features.conv0 = nn.Conv2d(1, 64, kernel_size=(7, 7),
+                                   stride=(2, 2), padding=(3, 3), bias=False)
+
+    # Modify all other convolutional layers to accept one channel input.
+    for i, layer in enumerate(net.features):
+        if isinstance(layer, nn.Conv2d):
+            layer.in_channels = 1
 
     # Casts CNN to run on device.
     net = net.to(device)
 
-    # Defines criterion to compute the hinge-embedded loss.
-    criterion = nn.NLLLoss()
+    # Defines criterion to compute the multi-margin loss.
+    criterion = nn.MultiMarginLoss()
     criterion = criterion.to(device)
 
     # Sets the error minimiser with a learning rate of 0.001.
