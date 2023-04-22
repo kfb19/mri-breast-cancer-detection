@@ -12,7 +12,6 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from torch import nn
-import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.models import resnet50
@@ -151,10 +150,10 @@ def main():
 
     # Directory information.
     data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single_hinge"
-    save_file = "E:\\data\\output\\nets\\resnet50_single_hinge.pth"
-    file_name = "resnet50_single_hinge.txt"
-    folder = "resnet50_single_hinge"
+    results_path = "E:\\data\\output\\results\\resnet50_single_multi"
+    save_file = "E:\\data\\output\\nets\\resnet50_single_multi.pth"
+    file_name = "resnet50_single_multi.txt"
+    folder = "resnet50_single_multi"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -236,15 +235,11 @@ def main():
     net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
                           stride=(2, 2), padding=(3, 3), bias=False)
 
-    # Replace the last fully connected layer with 2 output units.
-    num_ftrs = net.fc.in_features
-    net.fc = nn.Linear(num_ftrs, 24)
-
     # Casts CNN to run on device.
     net = net.to(device)
 
-    # Defines criterion to compute the hinge-embedded loss.
-    criterion = nn.HingeEmbeddingLoss()
+    # Defines criterion to compute the multi-margin loss.
+    criterion = nn.MultiMarginLoss()
     criterion = criterion.to(device)
 
     # Sets the error minimiser with a learning rate of 0.001.
