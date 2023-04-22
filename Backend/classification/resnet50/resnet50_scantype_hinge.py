@@ -1,6 +1,6 @@
-""" This module implements ResNet50 with a single
-input channel (as images are greyscale). It trains,
-validates and tests a ResNet50 classification CNN
+""" This module implements ResNet50 with a three
+channel input (3 different MRI slice scan types).
+It trains, validates and tests a ResNet50 classification CNN
 on Breast Cancer MRI scan slices, then calculates
 results for performance.
 """
@@ -60,28 +60,40 @@ class ScanDataset(Dataset):
         for target, target_label in enumerate(['neg', 'pos']):
             case_dir = os.path.join(self.data_dir, target_label)
             # Iterate over all images in the class/case type.
-            for fname in os.listdir(case_dir):
-                if '.bmp' in fname:
-                    fpath = os.path.join(case_dir, fname)
-                    # Load img from file (bmp).
-                    img_arr = imread(fpath, as_gray=True)
+            for folder in os.listdir(case_dir):
+                group = []
+                for fname in os.listdir(os.path.join(case_dir, folder)):
+                    if '.bmp' in fname:
+                        fpath = os.path.join(case_dir, folder, fname)
+                        # Load img from file (bmp).
+                        img_arr = imread(fpath, as_gray=True)
 
-                    # Normalise image.
-                    img_arr = self.normalize(img_arr)
+                        # Normalise image.
+                        img_arr = self.normalize(img_arr)
 
-                    # Convert to Tensor (PyTorch matrix).
-                    data_tensor = torch.from_numpy(img_arr).cuda()
-                    data_tensor = data_tensor.type(torch.FloatTensor)
+                        # Convert to Tensor (PyTorch matrix).
+                        data_tensor = torch.from_numpy(img_arr).type(
+                            torch.FloatTensor)
 
-                    # Add image channel dimension (to work with the CNN).
-                    data_tensor = torch.unsqueeze(data_tensor, 0)
+                        # Convert to a 4D tensor for resize operation.
+                        data_tensor = data_tensor.unsqueeze(0).unsqueeze(0)
 
-                    # Resize image.
-                    data_tensor = transforms.Resize(
-                        (self.img_size, self.img_size))(data_tensor)
+                        # Resize image.
+                        data_tensor = transforms.Resize(
+                            (self.img_size, self.img_size))(data_tensor)
 
-                    # Append label to list.
-                    labels.append((data_tensor, target))
+                        # Remove extra dimensions.
+                        data_tensor = data_tensor.squeeze(0).squeeze(0)
+
+                        group.append(data_tensor)
+
+                # Create RGB image tensor with the 3 images as channels.
+                data = torch.stack(group, dim=0)
+                data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+
+                # Create tuple of data and label and append to list.
+                label = (data, target)
+                labels.append(label)
 
         self.labels = labels
 
@@ -145,15 +157,15 @@ def plot_imgbatch(imgs, results_path):
 
 def main():
     """ Runs the bulk of the CNN code.
-        Implements ResNet50 with single-channel input.
+        Implements ResNet50 with 3-channel input.
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single_hinge"
-    save_file = "E:\\data\\output\\nets\\resnet50_single_hinge.pth"
-    file_name = "resnet50_single_hinge.txt"
-    folder = "resnet50_single_hinge"
+    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
+    results_path = "E:\\data\\output\\results\\resnet50_scantype"
+    save_file = "E:\\data\\output\\nets\\resnet50_scantype.pth"
+    file_name = "resnet50_scantype.txt"
+    folder = "resnet50_scantype"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -205,7 +217,7 @@ def main():
 
     # Defines batch sizes.
     train_batchsize = 32  # Depends on computation hardware.
-    eval_batchsize = 32  # Can be small due to small dataset size.
+    eval_batchsize = 16  # Can be small due to small dataset size.
 
     # Loads images for training in a random order.
     train_loader = DataLoader(train_dataset,
@@ -231,15 +243,19 @@ def main():
     # Define the convoluted neural network.
     net = resnet50(weights=None)
 
-    # This network takes single channel input.
-    net.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7),
+    # This network takes a 3 channel input.
+    net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
                           stride=(2, 2), padding=(3, 3), bias=False)
+
+    # Replace the last fully connected layer with 1 output unit.
+    num_ftrs = net.fc.in_features
+    net.fc = nn.Linear(num_ftrs, 1)
 
     # Casts CNN to run on device.
     net = net.to(device)
 
     # Defines criterion to compute the hinge-embedded loss.
-    criterion = nn.NLLLoss()
+    criterion = nn.HingeEmbeddingLoss()
     criterion = criterion.to(device)
 
     # Sets the error minimiser with a learning rate of 0.001.
