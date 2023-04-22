@@ -150,11 +150,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\mobile_single"
-    save_file = "E:\\data\\output\\nets\\mobile_single.pth"
-    file_name = "mobile_single.txt"
-    folder = "mobile_single"
+    data_dir = 'F:\\data\\output\\bmp_out_single_classify'
+    results_path = "F:\\data\\output\\results\\alexnet_single"
+    save_file = "F:\\data\\output\\nets\\alexnet_single.pth"
+    file_name = "alexnet_single.txt"
+    folder = "alexnet_single"
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

@@ -161,9 +161,9 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
-    results_path = "E:\\data\\output\\results\\alexnet_scantype"
-    save_file = "E:\\data\\output\\nets\\alexnet_scantype.pth"
+    data_dir = 'F:\\data\\output\\bmp_out_scantype_classify'
+    results_path = "F:\\data\\output\\results\\alexnet_scantype"
+    save_file = "F:\\data\\output\\nets\\alexnet_scantype.pth"
     file_name = "alexnet_scantype.txt"
     folder = "alexnet_scantype"
 
