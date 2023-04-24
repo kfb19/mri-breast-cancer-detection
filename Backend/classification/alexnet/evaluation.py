@@ -106,7 +106,7 @@ class Evaluation():
             true_n: the number of true negatives.
         """
 
-        file_path = 'E:\\data\\output\\results'
+        file_path = 'F:\\data\\output\\results'
 
         # Creating required file paths.
         if not os.path.exists(file_path):

@@ -150,9 +150,9 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\alexnet_single_multi"
-    save_file = "E:\\data\\output\\nets\\alexnet_single_multi.pth"
+    data_dir = 'F:\\data\\output\\bmp_out_single_classify'
+    results_path = "F:\\data\\output\\results\\alexnet_single_multi"
+    save_file = "F:\\data\\output\\nets\\alexnet_single_multi.pth"
     file_name = "alexnet_single_multi.txt"
     folder = "alexnet_single_multi"
 

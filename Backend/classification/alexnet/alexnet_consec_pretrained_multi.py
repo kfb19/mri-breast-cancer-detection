@@ -162,9 +162,9 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
-    results_path = "E:\\data\\output\\results\\alexnet_consec_pretrained_multi"
-    save_file = "E:\\data\\output\\nets\\alexnet_consec_pretrained_multi.pth"
+    data_dir = 'F:\\data\\output\\bmp_out_consec_classify'
+    results_path = "F:\\data\\output\\results\\alexnet_consec_pretrained_multi"
+    save_file = "F:\\data\\output\\nets\\alexnet_consec_pretrained_multi.pth"
     file_name = "alexnet_consec_pretrained_multi.txt"
     folder = "alexnet_consec_pretrained_multi"
 

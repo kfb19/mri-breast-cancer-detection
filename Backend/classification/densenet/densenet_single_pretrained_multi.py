@@ -151,9 +151,9 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\densenet_single_pretrained_multi"
-    save_file = "E:\\data\\output\\nets\\densenet_single_pretrained_multi.pth"
+    data_dir = 'F:\\data\\output\\bmp_out_single_classify'
+    results_path = "F:\\data\\output\\results\\densenet_single_pretrained_multi"
+    save_file = "F:\\data\\output\\nets\\densenet_single_pretrained_multi.pth"
     file_name = "densenet_single_pretrained_multi.txt"
     folder = "densenet_single_pretrained_multi"
 
