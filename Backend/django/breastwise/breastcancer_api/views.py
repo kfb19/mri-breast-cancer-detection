@@ -1,13 +1,17 @@
-from django.shortcuts import render
+""" Defines the Views class. """
 
-# Create your views here.
-# views.py
 from rest_framework import viewsets
+from .serializers import ScanSerializer, ResultsSerializer
+from .models import Scan, Results
 
-from .serializers import UserSerializer
-from .models import User
+
+class ScanViewSet(viewsets.ModelViewSet):
+    """ Class for scan viws. """
+    queryset = Scan.objects.all().order_by('dicom_file')
+    serializer_class = ScanSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by('user_id')
-    serializer_class = UserSerializer
+class ResultsViewSet(viewsets.ModelViewSet):
+    """ Class for results views. """
+    queryset = Results.objects.all().order_by('dicom_file')
+    serializer_class = ResultsSerializer

@@ -1,5 +1,8 @@
-from django.contrib import admin
+""" This module is to register the models. """
 
-# Register your models here.
-from .models import User
-admin.site.register(User)
+from django.contrib import admin
+from .models import Scan
+from .models import Results
+
+admin.site.register(Scan)
+admin.site.register(Results)

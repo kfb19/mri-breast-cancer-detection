@@ -1,14 +1,21 @@
+""" This class declares the models for use in the API. """
+
 from django.db import models
-
-# Create your models here.
-# models.py
-from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
-class User(models.Model):
-    user_id = models.CharField(max_length=60)
-    first_name = models.CharField(max_length=60)
-    last_name = models.CharField(max_length=60)
-    password = models.CharField(max_length=60)
+# pylint: disable=E0307
+class Results(models.Model):
+    """ Model for the scan results."""
+    cancerous_slices = ArrayField(models.IntegerField())
+
     def __str__(self):
-        return self.user_id
+        return self.cancerous_slices
+
+
+class Scan(models.Model):
+    """ Model for the uploaded scan."""
+    dicom_file = models.FileField()
+
+    def __str__(self):
+        return self.dicom_file
