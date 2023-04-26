@@ -5,17 +5,7 @@ from django.contrib.postgres.fields import ArrayField
 
 
 # pylint: disable=E0307
-class Results(models.Model):
+class File(models.Model):
     """ Model for the scan results. """
-    cancerous_slices = ArrayField(models.IntegerField())
+    file = models.FileField(blank=False, null=False)
 
-    def __str__(self):
-        return self.cancerous_slices
-
-
-class Scan(models.Model):
-    """ Model for the uploaded scan ZIP. """
-    dicom_file = models.FileField(upload_to='upload/')
-
-    def __str__(self):
-        return self.dicom_file
