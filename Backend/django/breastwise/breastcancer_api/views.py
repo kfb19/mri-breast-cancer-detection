@@ -2,30 +2,40 @@
 
 import zipfile
 import os
+import numpy as np
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
+import pydicom
+from skimage.io import imsave
 from .serializers import FileSerializer
 
 
 class FileView(APIView):
+    """ DOCSTRING """
     parser_classes = (MultiPartParser, FormParser)
-    
+
     def post(self, request, *args, **kwargs):
         file_serializer = FileSerializer(data=request.data)
-        
+
         if file_serializer.is_valid():
             file_serializer.save()
-            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(file_serializer.data,
+                            status=status.HTTP_201_CREATED)
         else:
-            return Response(file_serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(file_serializer.data,
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 def scan(request):
     """ DOCSTRING """
 
     uploads_folder = "uploads/"
+    single_folder = "uploads/pre"
+    pass1_folder = "uploads/1st_pass"
+    pass2_folder = "uploads/2nd_pass"
+    pass3_folder = "uploads/3rd_pass"
     zip_name = "uploads/series.zip"
 
     # Open the zip file for reading.
@@ -38,15 +48,15 @@ def scan(request):
 
     results = []  # The array in which to store the results.
 
-    process_single()
-    process_scantype()
-    # assert same lengths??
-    single_results = [0, 0, 1, 0, 1, 1, 0, 1]  # analyse_single()
-    scantype_results = [0, 1, 1, 0, 1, 1, 0, 0]  # analyse_scantype()
+    process_single(single_folder)
+    process_scantype(pass1_folder, pass2_folder, pass3_folder)
+
+    single_results = analyse_single()
+    scantype_results = analyse_scantype()
 
     results = average_results(single_results, scantype_results)
 
-    # Loop through the file list and delete each file
+    # Loop through the file list and delete each file.
     for folder in uploads_list:
         if folder != "series.zip":  # DELETE ME LATER
             folder_dir = uploads_folder + folder + "/"
@@ -61,15 +71,84 @@ def scan(request):
     return results
 
 
-def process_single():
+def process_single(single_folder):
     """ DOCSTRING """
-    print()
+
+    counter = 0
+    single_bmp_path = "uploads/single_bmp/"
+    if not os.path.exists(single_bmp_path):
+        os.makedirs(single_bmp_path)
+    for dicom_img in single_folder:
+        # Create a path to save the slice .bmp file in.
+        bmp_path = os.path.join(single_bmp_path, f'{counter}.bmp')
+        # Only make the bmp image if it doesn't already exist.
+        if not os.path.exists(bmp_path):
+            # Load DICOM file with pydicom library.
+            dicom = pydicom.dcmread(dicom_img)
+
+            # Convert DICOM into numerical array of pixel intensity values.
+            img = dicom.pixel_array
+
+            # Convert uint16 datatype to float, scaled properly for uint8.
+            img = img.astype(np.float) * 255. / img.max()
+
+            # Convert from float -> uint8.
+            img = img.astype(np.uint8)
+
+            # Invert image if necessary, according to DICOM metadata.
+            img_type = dicom.PhotometricInterpretation
+            if img_type == "MONOCHROME1":
+                img = np.invert(img)
+
+            # Save final .bmp.
+            imsave(bmp_path, img)
+            counter += 1
 
 
-def process_scantype():
+def process_scantype(pass1_folder, pass2_folder, pass3_folder):
     """ DOCSTRING """
-    print()
-    return []
+
+    array_of_three = []
+    counter = 0
+    scantype_bmp_path = "uploads/scantype_bmp/"
+    if not os.path.exists(scantype_bmp_path):
+        os.makedirs(scantype_bmp_path)
+    for dicom_img in pass1_folder:
+        # arrya of 3 bit hre
+        array_of_three.append(dicom_img)
+        
+        
+        mini_folder = os.path.join(scantype_bmp_path, f'{counter}')
+        if not os.path.exists(mini_folder):
+            os.makedirs(mini_folder)
+        img_no = 0
+        for pass_scan in array_of_three:
+            # Create a path to save the slice .bmp file in.
+            bmp_path = os.path.join(mini_folder, f'{img_no}.bmp')
+            # Only make the bmp image if it doesn't already exist.
+            if not os.path.exists(bmp_path):
+                # Load DICOM file with pydicom library.
+                dicom = pydicom.dcmread(dicom_img)
+
+                # Convert DICOM into numerical array of pixel intensity values.
+                img = dicom.pixel_array
+
+                # Convert uint16 datatype to float, scaled properly for uint8.
+                img = img.astype(np.float) * 255. / img.max()
+
+                # Convert from float -> uint8.
+                img = img.astype(np.uint8)
+
+                # Invert image if necessary, according to DICOM metadata.
+                img_type = dicom.PhotometricInterpretation
+                if img_type == "MONOCHROME1":
+                    img = np.invert(img)
+
+                # Save final .bmp.
+                imsave(bmp_path, img)
+                img_no += 1
+        counter += 1
+        array_of_three = []
 
 
 def analyse_single():
