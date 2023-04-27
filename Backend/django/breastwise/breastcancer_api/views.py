@@ -9,9 +9,12 @@ from rest_framework.response import Response
 from rest_framework import status
 import pydicom
 import torch
+from torchvision.models import vgg19
 from torchvision import transforms
+from torchvision.models import VGG19_Weights
 from skimage.io import imsave
 from skimage.io import imread
+from torch import nn
 from .serializers import FileSerializer
 
 
@@ -27,37 +30,43 @@ class FileView(APIView):
 
         if file_serializer.is_valid():
             file_serializer.save()
-            return Response(file_serializer.data,
+            output = scan()
+            return Response(output,
                             status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.data,
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-def scan(request):
+def scan():
     """ DOCSTRING """
 
-    uploads_folder = "uploads/"
-    single_folder = "uploads/pre"
-    pass1_folder = "uploads/1st_pass"
-    pass2_folder = "uploads/2nd_pass"
-    pass3_folder = "uploads/3rd_pass"
-    zip_name = "uploads/series.zip"
+    uploads_folder = "media/"
+    single_folder = "media/pre"
+    pass1_folder = "media/1st_pass"
+    pass2_folder = "media/2nd_pass"
+    pass3_folder = "media/3rd_pass"
+    zip_name = "media/series.zip"
 
     # Open the zip file for reading.
     with zipfile.ZipFile(zip_name, 'r') as zip_ref:
         # Extract all files to the specified directory.
-        zip_ref.extractall("uploads/")
+        zip_ref.extractall("media/")
 
     # Get a list of all files in the folder
     uploads_list = os.listdir(uploads_folder)
 
     results = []  # The array in which to store the results.
 
+    single_folder = os.listdir(single_folder)
     process_single(single_folder)
+
+    pass1_folder = os.listdir(pass1_folder)
+    pass2_folder = os.listdir(pass2_folder)
+    pass3_folder = os.listdir(pass3_folder)
     process_scantype(pass1_folder, pass2_folder, pass3_folder)
 
-    single_results = analyse_single()
+    single_results = []  # analyse_single()
     scantype_results = analyse_scantype()
 
     results = average_results(single_results, scantype_results)
@@ -73,6 +82,8 @@ def scan(request):
                 print(path)
                 os.remove(path)
             os.removedirs(uploads_folder + folder)
+        else:
+            os.remove(folder)
 
     return results
 
@@ -81,7 +92,7 @@ def process_single(single_folder):
     """ DOCSTRING """
 
     counter = 0
-    single_bmp_path = "uploads/single_bmp/"
+    single_bmp_path = "media/single_bmp/"
     if not os.path.exists(single_bmp_path):
         os.makedirs(single_bmp_path)
     for dicom_img in single_folder:
@@ -90,7 +101,7 @@ def process_single(single_folder):
         # Only make the bmp image if it doesn't already exist.
         if not os.path.exists(bmp_path):
             # Load DICOM file with pydicom library.
-            dicom = pydicom.dcmread(dicom_img)
+            dicom = pydicom.dcmread("media/pre/" + dicom_img)
 
             # Convert DICOM into numerical array of pixel intensity values.
             img = dicom.pixel_array
@@ -116,7 +127,7 @@ def process_scantype(pass1_folder, pass2_folder, pass3_folder):
 
     array_of_three = []
     counter = 0
-    scantype_bmp_path = "uploads/scantype_bmp/"
+    scantype_bmp_path = "media/scantype_bmp/"
     if not os.path.exists(scantype_bmp_path):
         os.makedirs(scantype_bmp_path)
 
@@ -127,11 +138,11 @@ def process_scantype(pass1_folder, pass2_folder, pass3_folder):
 
     for dicom_img in pass1_folder:
         filename = os.path.basename(dicom_img)
-        array_of_three.append(dicom_img)  # CHECK WHETHER FILENAME OR IMG
+        array_of_three.append(os.path.join("media/1st_pass", filename))
         if filename in pass2_filenames:
-            array_of_three.append(os.path.join(pass2_folder, filename))
+            array_of_three.append(os.path.join("media/2nd_pass", filename))
         if filename in pass3_filenames:
-            array_of_three.append(os.path.join(pass3_folder, filename))
+            array_of_three.append(os.path.join("media/2nd_pass", filename))
 
         mini_folder = os.path.join(scantype_bmp_path, f'{counter}')
         if not os.path.exists(mini_folder):
@@ -188,7 +199,7 @@ def analyse_single():
 
     results = []
     # Preprocess each image.
-    directory = "uploads/single_bmp/"
+    directory = "media/single_bmp/"
     for fname in os.listdir(directory):
         if '.bmp' in fname:
             fpath = os.path.join(directory, fname)
@@ -210,6 +221,22 @@ def analyse_single():
                 (128, 128))(data_tensor)
 
             # Run through net & append results to results
+            checkpoint = torch.load("nets/vgg_single_pretrained.pth")
+            # Define the convoluted neural network.
+            net = vgg19(weights=VGG19_Weights.IMAGENET1K_V1)
+
+            # Modify the first convolutional layer to accept one channel input.
+            net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
+                                        stride=(2, 2), padding=(3, 3),
+                                        bias=False)
+            # Modify all other convolutional layers to accept one channel.
+            for i, layer in enumerate(net.features):
+                if isinstance(layer, nn.Conv2d):
+                    layer.in_channels = 1
+            net.load_state_dict(checkpoint)
+            net.eval()
+            output = net(data_tensor)
+            results.append(output)
 
     return results
 
@@ -219,7 +246,7 @@ def analyse_scantype():
 
     results = []
     # Preprocess each image.
-    directory = "uploads/scantype_bmp/"
+    directory = "media/scantype_bmp/"
     # Iterate over all images in the class/case type.
     for folder in os.listdir(directory):
         group = []
@@ -251,8 +278,22 @@ def analyse_scantype():
             # Create RGB image tensor with the 3 images as channels.
             data = torch.stack(group, dim=0)
             data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+            group = []
 
             # Run through net & append results to results
+            checkpoint = torch.load("nets/vgg_scantype.pth")
+
+            # Define the convoluted neural network.
+            net = vgg19(weights=None)
+
+            # This network takes a 3 channel input.
+            net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
+                                  stride=(2, 2), padding=(3, 3), bias=False)
+            print(data.shape)
+            net.load_state_dict(checkpoint)
+            net.eval()
+            output = net(data)
+            results.append(output)
 
     return results
 
