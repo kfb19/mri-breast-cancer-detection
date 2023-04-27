@@ -21,12 +21,14 @@ from .serializers import FileSerializer
 # pylint: disable=E1101
 # pylint: disable=E1102
 # pylint: disable=W0612
+# pylint: disable=W0613
 # pylint: disable=C0200
 class FileView(APIView):
-    """ DOCSTRING """
+    """ This class creates an API. """
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
+        """ Defines what happens on a post request. """
         file_serializer = FileSerializer(data=request.data)
 
         if file_serializer.is_valid():
@@ -80,7 +82,7 @@ class FileView(APIView):
 
 
 def delete_folders():
-    """ DOCSTRING """
+    """ Deletes the temporary folders after use. """
     # Get a list of all files in the folder
     uploads_folder = "media/"
     uploads_list = os.listdir(uploads_folder)
@@ -107,7 +109,11 @@ def delete_folders():
 
 
 def scan():
-    """ DOCSTRING """
+    """ Runs the code for the API CNN scan analysis.
+
+    Returns:
+        results: an array of indices of cancerous slices
+    """
 
     single_folder = "media/pre"
     pass1_folder = "media/1st_pass"
@@ -135,7 +141,11 @@ def scan():
 
 
 def process_single(single_folder):
-    """ DOCSTRING """
+    """ Processes the single data.
+
+    Args:
+        single_folder: the folder for the pre images
+    """
 
     counter = 0
     single_bmp_path = "media/single_bmp/"
@@ -169,7 +179,13 @@ def process_single(single_folder):
 
 
 def process_scantype(pass1_folder, pass2_folder, pass3_folder):
-    """ DOCSTRING """
+    """ Processes the scantype data.
+
+    Args:
+        pass1_folder: the folder for the 1st pass images
+        pass2_folder: the folder for the 2nd pass images
+        pass3_folder: the folder for the 3rd pass images
+    """
 
     array_of_three = []
     counter = 0
@@ -227,9 +243,9 @@ def normalize(img):
     """ Normalises image pixel values to range [0, 255].
 
     Args:
-        img: the array for each image/scan.
+        img: the array for each image/scan
     Returns:
-        img: the edited array for each image/scan.
+        img: the edited array for each image/scan
     """
 
     # Convert uint16 -> float.
@@ -241,7 +257,11 @@ def normalize(img):
 
 
 def analyse_single():
-    """ DOCSTRING """
+    """ Analyses the single results with the VGG19 model
+
+    Returns:
+        results: the array of classifications for the scan slices
+    """
 
     results = []
     # Preprocess each image.
@@ -290,7 +310,11 @@ def analyse_single():
 
 
 def analyse_scantype():
-    """ DOCSTRING """
+    """ Analyses the scantype results with the VGG19 model
+
+    Returns:
+        results: the array of classifications for the scan slices
+    """
 
     results = []
     # Preprocess each image.
