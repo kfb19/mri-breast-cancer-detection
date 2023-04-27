@@ -8,10 +8,16 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 import pydicom
+import torch
+from torchvision import transforms
 from skimage.io import imsave
+from skimage.io import imread
 from .serializers import FileSerializer
 
 
+# pylint: disable=E1101
+# pylint: disable=E1102
+# pylint: disable=W0612
 class FileView(APIView):
     """ DOCSTRING """
     parser_classes = (MultiPartParser, FormParser)
@@ -160,16 +166,95 @@ def process_scantype(pass1_folder, pass2_folder, pass3_folder):
         array_of_three = []
 
 
+def normalize(img):
+    """ Normalises image pixel values to range [0, 255].
+
+    Args:
+        img: the array for each image/scan.
+    Returns:
+        img: the edited array for each image/scan.
+    """
+
+    # Convert uint16 -> float.
+    img = img.astype(float) * 255. / img.max()
+    # Convert float -> unit8.
+    img = img.astype(np.uint8)
+
+    return img
+
+
 def analyse_single():
     """ DOCSTRING """
-    print()
-    return []
+
+    results = []
+    # Preprocess each image.
+    directory = "uploads/single_bmp/"
+    for fname in os.listdir(directory):
+        if '.bmp' in fname:
+            fpath = os.path.join(directory, fname)
+            # Load img from file (bmp).
+            img_arr = imread(fpath, as_gray=True)
+
+            # Normalise image.
+            img_arr = normalize(img_arr)
+
+            # Convert to Tensor (PyTorch matrix).
+            data_tensor = torch.from_numpy(img_arr)
+            data_tensor = data_tensor.type(torch.FloatTensor)
+
+            # Add image channel dimension (to work with the CNN).
+            data_tensor = torch.unsqueeze(data_tensor, 0)
+
+            # Resize image.
+            data_tensor = transforms.Resize(
+                (128, 128))(data_tensor)
+
+            # Run through net & append results to results
+
+    return results
 
 
 def analyse_scantype():
     """ DOCSTRING """
-    print()
-    return []
+
+    results = []
+    # Preprocess each image.
+    directory = "uploads/scantype_bmp/"
+    # Iterate over all images in the class/case type.
+    for folder in os.listdir(directory):
+        group = []
+        for fname in os.listdir(os.path.join(directory, folder)):
+            if '.bmp' in fname:
+                fpath = os.path.join(directory, folder, fname)
+                # Load img from file (bmp).
+                img_arr = imread(fpath, as_gray=True)
+
+                # Normalise image.
+                img_arr = normalize(img_arr)
+
+                # Convert to Tensor (PyTorch matrix).
+                data_tensor = torch.from_numpy(img_arr).type(
+                    torch.FloatTensor)
+
+                # Convert to a 4D tensor for resize operation.
+                data_tensor = data_tensor.unsqueeze(0).unsqueeze(0)
+
+                # Resize image.
+                data_tensor = transforms.Resize(
+                    (128, 128))(data_tensor)
+
+                # Remove extra dimensions.
+                data_tensor = data_tensor.squeeze(0).squeeze(0)
+
+                group.append(data_tensor)
+
+            # Create RGB image tensor with the 3 images as channels.
+            data = torch.stack(group, dim=0)
+            data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+
+            # Run through net & append results to results
+
+    return results
 
 
 def average_results(single_results, scantype_results):
