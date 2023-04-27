@@ -21,6 +21,7 @@ from .serializers import FileSerializer
 # pylint: disable=E1101
 # pylint: disable=E1102
 # pylint: disable=W0612
+# pylint: disable=C0200
 class FileView(APIView):
     """ DOCSTRING """
     parser_classes = (MultiPartParser, FormParser)
@@ -30,31 +31,88 @@ class FileView(APIView):
 
         if file_serializer.is_valid():
             file_serializer.save()
+
+            flag = False
+            for folder in os.listdir('media/'):
+                if folder == 'series.zip':
+                    flag = True
+            if flag is False:
+                delete_folders()
+                return Response("Invalid file name: no series.zip found",
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            zip_name = "media/series.zip"
+            # Open the zip file for reading.
+            with zipfile.ZipFile(zip_name, 'r') as zip_ref:
+                # Extract all files to the specified directory.
+                zip_ref.extractall("media/")
+
+            flag = True
+
+            folders_to_check = ['1st_pass', '2nd_pass', '3rd_pass', 'pre']
+
+            for folder in folders_to_check:
+                if not os.path.exists(f"media/{folder}"):
+                    flag = False
+                    break
+
+            if flag:
+                folder_lengths = set()
+                for folder in folders_to_check:
+                    folder_length = len(os.listdir(f"media/{folder}"))
+                    folder_lengths.add(folder_length)
+
+                if len(folder_lengths) > 1:
+                    flag = False
+
+            if not flag:
+                delete_folders()
+                return Response("Invalid folder structure.",
+                                status=status.HTTP_400_BAD_REQUEST)
+
             output = scan()
             return Response(output,
                             status=status.HTTP_201_CREATED)
         else:
+            delete_folders()
             return Response(file_serializer.data,
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+def delete_folders():
+    """ DOCSTRING """
+    # Get a list of all files in the folder
+    uploads_folder = "media/"
+    uploads_list = os.listdir(uploads_folder)
+
+    # Loop through the file list and delete each file.
+    for folder in uploads_list:
+        if ".zip" not in folder and folder != "scantype_bmp":
+            folder_dir = uploads_folder + folder + "/"
+            os.chmod(folder_dir, 0o777)
+            files_in_folder = os.listdir(folder_dir)
+            for file in files_in_folder:
+                path = os.path.join(folder_dir, file)
+                os.remove(path)
+            os.removedirs(uploads_folder + folder)
+        elif (folder == "scantype_bmp"):
+            lst = os.listdir("media/" + folder + "/")
+            for fol in lst:
+                fol_files = os.listdir("media/" + folder + "/" + fol)
+                for i in fol_files:
+                    os.remove("media/" + folder + "/" + fol + "/" + i)
+                os.removedirs("media/" + folder + "/" + fol)
+        else:
+            os.remove("media/" + folder)
 
 
 def scan():
     """ DOCSTRING """
 
-    uploads_folder = "media/"
     single_folder = "media/pre"
     pass1_folder = "media/1st_pass"
     pass2_folder = "media/2nd_pass"
     pass3_folder = "media/3rd_pass"
-    zip_name = "media/series.zip"
-
-    # Open the zip file for reading.
-    with zipfile.ZipFile(zip_name, 'r') as zip_ref:
-        # Extract all files to the specified directory.
-        zip_ref.extractall("media/")
-
-    # Get a list of all files in the folder
-    uploads_list = os.listdir(uploads_folder)
 
     results = []  # The array in which to store the results.
 
@@ -66,24 +124,12 @@ def scan():
     pass3_folder = os.listdir(pass3_folder)
     process_scantype(pass1_folder, pass2_folder, pass3_folder)
 
-    single_results = []  # analyse_single()
+    single_results = analyse_single()
     scantype_results = analyse_scantype()
 
     results = average_results(single_results, scantype_results)
 
-    # Loop through the file list and delete each file.
-    for folder in uploads_list:
-        if folder != "series.zip":  # DELETE ME LATER
-            folder_dir = uploads_folder + folder + "/"
-            os.chmod(folder_dir, 0o777)
-            files_in_folder = os.listdir(folder_dir)
-            for file in files_in_folder:
-                path = os.path.join(folder_dir, file)
-                print(path)
-                os.remove(path)
-            os.removedirs(uploads_folder + folder)
-        else:
-            os.remove(folder)
+    delete_folders()
 
     return results
 
@@ -235,8 +281,10 @@ def analyse_single():
                     layer.in_channels = 1
             net.load_state_dict(checkpoint)
             net.eval()
+            data_tensor = data_tensor.unsqueeze(0)
             output = net(data_tensor)
-            results.append(output)
+            _, predicted_class = output.max(1)
+            results.append(predicted_class)
 
     return results
 
@@ -275,25 +323,26 @@ def analyse_scantype():
 
                 group.append(data_tensor)
 
-            # Create RGB image tensor with the 3 images as channels.
-            data = torch.stack(group, dim=0)
-            data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
-            group = []
+        # Create RGB image tensor with the 3 images as channels.
+        data = torch.stack(group, dim=0)
+        data = torch.cat([data[0:1], data[1:2], data[2:3]], dim=0)
+        group = []
 
-            # Run through net & append results to results
-            checkpoint = torch.load("nets/vgg_scantype.pth")
+        # Run through net & append results to results
+        checkpoint = torch.load("nets/vgg_scantype.pth")
 
-            # Define the convoluted neural network.
-            net = vgg19(weights=None)
+        # Define the convoluted neural network.
+        net = vgg19(weights=None)
 
-            # This network takes a 3 channel input.
-            net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
-                                  stride=(2, 2), padding=(3, 3), bias=False)
-            print(data.shape)
-            net.load_state_dict(checkpoint)
-            net.eval()
-            output = net(data)
-            results.append(output)
+        # This network takes a 3 channel input.
+        net.conv1 = nn.Conv2d(3, 64, kernel_size=(7, 7),
+                              stride=(2, 2), padding=(3, 3), bias=False)
+        net.load_state_dict(checkpoint)
+        net.eval()
+        data = data.unsqueeze(0)
+        output = net(data)
+        _, predicted_class = output.max(1)
+        results.append(predicted_class)
 
     return results
 
@@ -329,4 +378,8 @@ def average_results(single_results, scantype_results):
             if final_results[num] == -1:  # No nearby cancerous slices.
                 final_results[num] = 0
 
-    return final_results
+    result_indexes = []
+    for index in range(len(final_results)):
+        if final_results[index] == 1:
+            result_indexes.append(index)
+    return result_indexes
