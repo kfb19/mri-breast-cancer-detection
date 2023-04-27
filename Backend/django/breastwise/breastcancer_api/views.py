@@ -113,11 +113,20 @@ def process_scantype(pass1_folder, pass2_folder, pass3_folder):
     scantype_bmp_path = "uploads/scantype_bmp/"
     if not os.path.exists(scantype_bmp_path):
         os.makedirs(scantype_bmp_path)
+
+    pass2_filenames = set(os.path.basename(pass2_img) for pass2_img in
+                          pass2_folder)
+    pass3_filenames = set(os.path.basename(pass3_img) for pass3_img in
+                          pass3_folder)
+
     for dicom_img in pass1_folder:
-        # arrya of 3 bit hre
-        array_of_three.append(dicom_img)
-        
-        
+        filename = os.path.basename(dicom_img)
+        array_of_three.append(dicom_img)  # CHECK WHETHER FILENAME OR IMG
+        if filename in pass2_filenames:
+            array_of_three.append(os.path.join(pass2_folder, filename))
+        if filename in pass3_filenames:
+            array_of_three.append(os.path.join(pass3_folder, filename))
+
         mini_folder = os.path.join(scantype_bmp_path, f'{counter}')
         if not os.path.exists(mini_folder):
             os.makedirs(mini_folder)
@@ -128,7 +137,7 @@ def process_scantype(pass1_folder, pass2_folder, pass3_folder):
             # Only make the bmp image if it doesn't already exist.
             if not os.path.exists(bmp_path):
                 # Load DICOM file with pydicom library.
-                dicom = pydicom.dcmread(dicom_img)
+                dicom = pydicom.dcmread(pass_scan)
 
                 # Convert DICOM into numerical array of pixel intensity values.
                 img = dicom.pixel_array
