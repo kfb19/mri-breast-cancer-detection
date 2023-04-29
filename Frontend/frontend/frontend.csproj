@@ -47,6 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="clsDBConnector.cs" />
+    <Compile Include="uploadForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="uploadForm.Designer.cs">
+      <DependentUpon>uploadForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="saveScanForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,13 +71,6 @@
     <Compile Include="splashScreenForm.Designer.cs">
       <DependentUpon>splashScreenForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="uploadScanForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include=".Designer.cs">
-      <DependentUpon>uploadScanForm.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="loginForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,8 +85,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include=".Designer.resx">
-      <DependentUpon>.Designer.cs</DependentUpon>
+    <EmbeddedResource Include="uploadForm.resx">
+      <DependentUpon>uploadForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="saveScanForm.resx">
       <DependentUpon>saveScanForm.cs</DependentUpon>
@@ -112,9 +111,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="splashScreenForm.resx">
       <DependentUpon>splashScreenForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="uploadScanForm.resx">
-      <DependentUpon>uploadScanForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

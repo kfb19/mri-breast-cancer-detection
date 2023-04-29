@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(archiveForm));
             this.analysingButton = new System.Windows.Forms.Button();
             this.viewResultsButton = new System.Windows.Forms.Button();
             this.saveScanButton = new System.Windows.Forms.Button();
@@ -280,6 +281,7 @@
             this.Controls.Add(this.uploadScanButton);
             this.Controls.Add(this.panel1);
             this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "archiveForm";
             this.Text = "ARCHIVE";
             this.Load += new System.EventHandler(this.saveScanForm_Load);

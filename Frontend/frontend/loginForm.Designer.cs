@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(loginForm));
             this.emailAddressInput = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.passwordInput = new System.Windows.Forms.TextBox();
@@ -165,6 +166,7 @@
             this.Controls.Add(this.emailAddressLab);
             this.Controls.Add(this.passwordInput);
             this.Controls.Add(this.emailAddressInput);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "loginForm";
             this.Text = "LOG IN";
             this.ResumeLayout(false);

@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\frontend"
   ],
-  "SelectedNode": "\\frontend.sln",
+  "SelectedNode": "\\frontend\\loginForm.cs",
   "PreviewInSolutionExplorer": false
 }

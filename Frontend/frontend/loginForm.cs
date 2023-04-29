@@ -43,7 +43,7 @@ namespace frontend
                     loggedin = true;
                     int userType = Convert.ToInt32(dr[2].ToString());
 
-                    uploadScanForm uploadScanForm = new uploadScanForm(); //input_email
+                    uploadForm uploadScanForm = new uploadForm(); //input_email
                     uploadScanForm.Show();
 
                     this.Close();

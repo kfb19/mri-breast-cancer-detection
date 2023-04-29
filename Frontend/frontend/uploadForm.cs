@@ -10,21 +10,11 @@ using System.Windows.Forms;
 
 namespace frontend
 {
-    public partial class uploadScanForm : Form
+    public partial class uploadForm : Form
     {
-        public uploadScanForm()
+        public uploadForm()
         {
             InitializeComponent();
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void analyseButton_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
