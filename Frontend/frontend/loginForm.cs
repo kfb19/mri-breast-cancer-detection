@@ -32,21 +32,20 @@ namespace frontend
 
             dbConnector.Connect();
 
-            sqlStr = "SELECT email, [password] FROM tblUser"; //states the sql statement
+            sqlStr = "SELECT email_address, [password] FROM users"; // States the sql statement.
 
-            dr = dbConnector.DoSQL(sqlStr);//executes the SQL statement 
+            dr = dbConnector.DoSQL(sqlStr); //Executes the SQL statement.
 
             while (dr.Read())
             {
-                if (input_email == dr[0].ToString() && input_password == dr[1].ToString()) //checks to see if the login credentials are correct 
+                if (input_email == dr[0].ToString() && input_password == dr[1].ToString()) // Checks to see if the login credentials are correct.
                 {
                     loggedin = true;
-                    int userType = Convert.ToInt32(dr[2].ToString());
 
-                    uploadForm uploadScanForm = new uploadForm(); //input_email
+                    uploadForm uploadScanForm = new uploadForm(input_email);
                     uploadScanForm.Show();
 
-                    this.Close();
+                    this.Hide();
                 }
             }
 

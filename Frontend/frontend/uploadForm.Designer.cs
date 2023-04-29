@@ -50,6 +50,7 @@
             this.logOutButton = new System.Windows.Forms.Button();
             this.uploadScanButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -131,6 +132,7 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(106, 148);
             this.panel3.TabIndex = 21;
+            this.panel3.Visible = false;
             // 
             // results1Label
             // 
@@ -183,6 +185,7 @@
             this.uploadButton.TabIndex = 30;
             this.uploadButton.Text = "Upload";
             this.uploadButton.UseVisualStyleBackColor = false;
+            this.uploadButton.Click += new System.EventHandler(this.uploadButton_ClickAsync);
             // 
             // scanScrollBar
             // 
@@ -204,6 +207,7 @@
             this.analyseButton.TabIndex = 29;
             this.analyseButton.Text = "Analyse";
             this.analyseButton.UseVisualStyleBackColor = false;
+            this.analyseButton.Click += new System.EventHandler(this.analyseButton_Click);
             // 
             // panel2
             // 
@@ -306,6 +310,10 @@
             this.panel1.Size = new System.Drawing.Size(922, 90);
             this.panel1.TabIndex = 20;
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // uploadForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -359,5 +367,6 @@
         private System.Windows.Forms.Button logOutButton;
         private System.Windows.Forms.Button uploadScanButton;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

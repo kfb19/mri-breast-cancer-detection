@@ -1,6 +1,3 @@
-C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\bin\Debug\frontend.exe.config
-C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\bin\Debug\frontend.exe
-C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\bin\Debug\frontend.pdb
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.csproj.AssemblyReference.cache
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.csproj.SuggestedBindingRedirects.cache
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.uploadForm.resources
@@ -12,5 +9,3 @@ C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detec
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.splashScreenForm.resources
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.csproj.GenerateResource.cache
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.csproj.CoreCompileInputs.cache
-C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.exe
-C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.pdb
