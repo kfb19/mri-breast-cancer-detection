@@ -1,0 +1,13 @@
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\bin\Debug\frontend.exe.config
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\bin\Debug\frontend.exe
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\bin\Debug\frontend.pdb
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.csproj.AssemblyReference.cache
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.csproj.SuggestedBindingRedirects.cache
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.login.resources
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.Properties.Resources.resources
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.csproj.GenerateResource.cache
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.csproj.CoreCompileInputs.cache
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.exe
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.pdb
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.REGISTER.resources
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.UPLOADSCAN.resources
