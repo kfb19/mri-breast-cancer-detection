@@ -1,6 +1,6 @@
 ﻿namespace frontend
 {
-    partial class REGISTER
+    partial class registerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -59,7 +59,6 @@
             this.passwordInput.TabIndex = 13;
             this.passwordInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.passwordInput.UseSystemPasswordChar = true;
-            this.passwordInput.TextChanged += new System.EventHandler(this.password_text_TextChanged);
             // 
             // emailInput
             // 
@@ -72,7 +71,6 @@
             this.emailInput.Size = new System.Drawing.Size(227, 28);
             this.emailInput.TabIndex = 12;
             this.emailInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.emailInput.TextChanged += new System.EventHandler(this.username_text_TextChanged);
             // 
             // contextMenuStrip1
             // 
@@ -91,7 +89,7 @@
             this.gotoLoginButton.Size = new System.Drawing.Size(60, 21);
             this.gotoLoginButton.TabIndex = 19;
             this.gotoLoginButton.Text = "LOG IN";
-            this.gotoLoginButton.Click += new System.EventHandler(this.regLabel_Click);
+            this.gotoLoginButton.Click += new System.EventHandler(this.gotoLoginButton_Click);
             // 
             // clickHereLab
             // 
@@ -105,7 +103,6 @@
             this.clickHereLab.Size = new System.Drawing.Size(100, 21);
             this.clickHereLab.TabIndex = 18;
             this.clickHereLab.Text = "Click here to ";
-            this.clickHereLab.Click += new System.EventHandler(this.label1_Click);
             // 
             // haveAccountLab
             // 
@@ -119,7 +116,6 @@
             this.haveAccountLab.Size = new System.Drawing.Size(193, 21);
             this.haveAccountLab.TabIndex = 17;
             this.haveAccountLab.Text = "Already have an acccount?";
-            this.haveAccountLab.Click += new System.EventHandler(this.click_to_reg_label_Click);
             // 
             // registerButton
             // 
@@ -133,7 +129,6 @@
             this.registerButton.TabIndex = 16;
             this.registerButton.Text = "REGISTER";
             this.registerButton.UseVisualStyleBackColor = false;
-            this.registerButton.Click += new System.EventHandler(this.log_in_button_Click);
             // 
             // passwordLab
             // 
@@ -147,7 +142,6 @@
             this.passwordLab.Size = new System.Drawing.Size(104, 30);
             this.passwordLab.TabIndex = 15;
             this.passwordLab.Text = "Password:";
-            this.passwordLab.Click += new System.EventHandler(this.password_label_Click);
             // 
             // emailAddressLab
             // 
@@ -161,7 +155,6 @@
             this.emailAddressLab.Size = new System.Drawing.Size(148, 30);
             this.emailAddressLab.TabIndex = 14;
             this.emailAddressLab.Text = "Email Address:";
-            this.emailAddressLab.Click += new System.EventHandler(this.username_label_Click);
             // 
             // firstNameInput
             // 
@@ -174,7 +167,6 @@
             this.firstNameInput.Size = new System.Drawing.Size(227, 28);
             this.firstNameInput.TabIndex = 20;
             this.firstNameInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.firstNameInput.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // firstNameLab
             // 
@@ -188,7 +180,6 @@
             this.firstNameLab.Size = new System.Drawing.Size(118, 30);
             this.firstNameLab.TabIndex = 21;
             this.firstNameLab.Text = "First Name:";
-            this.firstNameLab.Click += new System.EventHandler(this.label2_Click);
             // 
             // textBox1
             // 
@@ -203,7 +194,6 @@
             this.textBox1.TabIndex = 22;
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox1.UseSystemPasswordChar = true;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged_1);
             // 
             // label2
             // 
@@ -217,7 +207,6 @@
             this.label2.Size = new System.Drawing.Size(173, 30);
             this.label2.TabIndex = 23;
             this.label2.Text = "Retype Password:";
-            this.label2.Click += new System.EventHandler(this.label2_Click_1);
             // 
             // textBox2
             // 
@@ -240,11 +229,11 @@
             this.label3.Location = new System.Drawing.Point(339, 107);
             this.label3.Name = "label3";
             this.label3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label3.Size = new System.Drawing.Size(118, 30);
+            this.label3.Size = new System.Drawing.Size(117, 30);
             this.label3.TabIndex = 25;
-            this.label3.Text = "First Name:";
+            this.label3.Text = "Last Name:";
             // 
-            // REGISTER
+            // registerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -264,9 +253,8 @@
             this.Controls.Add(this.registerButton);
             this.Controls.Add(this.passwordLab);
             this.Controls.Add(this.emailAddressLab);
-            this.Name = "REGISTER";
+            this.Name = "registerForm";
             this.Text = "REGISTER";
-            this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -1,6 +1,6 @@
 ﻿namespace frontend
 {
-    partial class LOGIN
+    partial class loginForm
     {
         /// <summary>
         /// Required designer variable.
@@ -51,7 +51,6 @@
             this.emailAddressInput.Size = new System.Drawing.Size(227, 28);
             this.emailAddressInput.TabIndex = 2;
             this.emailAddressInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.emailAddressInput.TextChanged += new System.EventHandler(this.username_text_TextChanged);
             // 
             // contextMenuStrip1
             // 
@@ -71,7 +70,6 @@
             this.passwordInput.TabIndex = 4;
             this.passwordInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.passwordInput.UseSystemPasswordChar = true;
-            this.passwordInput.TextChanged += new System.EventHandler(this.password_text_TextChanged);
             // 
             // emailAddressLab
             // 
@@ -111,6 +109,7 @@
             this.loginButton.TabIndex = 7;
             this.loginButton.Text = "LOG IN";
             this.loginButton.UseVisualStyleBackColor = false;
+            this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
             // reg1Lab
             // 
@@ -124,7 +123,6 @@
             this.reg1Lab.Size = new System.Drawing.Size(171, 21);
             this.reg1Lab.TabIndex = 9;
             this.reg1Lab.Text = "Don\'t have an account?";
-            this.reg1Lab.Click += new System.EventHandler(this.click_to_reg_label_Click);
             // 
             // reg2Lab
             // 
@@ -138,7 +136,6 @@
             this.reg2Lab.Size = new System.Drawing.Size(100, 21);
             this.reg2Lab.TabIndex = 10;
             this.reg2Lab.Text = "Click here to ";
-            this.reg2Lab.Click += new System.EventHandler(this.label1_Click);
             // 
             // registerButton
             // 
@@ -152,8 +149,9 @@
             this.registerButton.Size = new System.Drawing.Size(78, 21);
             this.registerButton.TabIndex = 11;
             this.registerButton.Text = "REGISTER";
+            this.registerButton.Click += new System.EventHandler(this.registerButton_Click);
             // 
-            // LOGIN
+            // loginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -167,7 +165,7 @@
             this.Controls.Add(this.emailAddressLab);
             this.Controls.Add(this.passwordInput);
             this.Controls.Add(this.emailAddressInput);
-            this.Name = "LOGIN";
+            this.Name = "loginForm";
             this.Text = "LOG IN";
             this.ResumeLayout(false);
             this.PerformLayout();

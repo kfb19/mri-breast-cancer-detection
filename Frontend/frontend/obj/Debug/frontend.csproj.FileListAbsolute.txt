@@ -11,3 +11,7 @@ C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\o
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.pdb
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.REGISTER.resources
 C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\frontend\frontend\obj\Debug\frontend.UPLOADSCAN.resources
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.csproj.AssemblyReference.cache
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.csproj.SuggestedBindingRedirects.cache
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.exe
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\frontend\obj\Debug\frontend.pdb

@@ -1,6 +1,6 @@
 ﻿namespace frontend
 {
-    partial class UPLOADSCAN
+    partial class uploadScanForm
     {
         /// <summary>
         /// Required designer variable.
@@ -36,18 +36,18 @@
             this.viewResultsButton = new System.Windows.Forms.Button();
             this.analysingButton = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.scanScrollBar = new System.Windows.Forms.HScrollBar();
             this.analyseButton = new System.Windows.Forms.Button();
             this.uploadButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
             this.sliceNoButton = new System.Windows.Forms.Button();
-            this.scanScrollBar = new System.Windows.Forms.HScrollBar();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.results1Label = new System.Windows.Forms.Label();
-            this.results2Lab = new System.Windows.Forms.Label();
-            this.cancerSlidesLab = new System.Windows.Forms.Label();
             this.cancerResultsLab = new System.Windows.Forms.Label();
             this.results4Lab = new System.Windows.Forms.Label();
             this.results3Label = new System.Windows.Forms.Label();
+            this.cancerSlidesLab = new System.Windows.Forms.Label();
+            this.results2Lab = new System.Windows.Forms.Label();
+            this.results1Label = new System.Windows.Forms.Label();
             this.exportButton = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -154,6 +154,13 @@
             this.panel2.Size = new System.Drawing.Size(585, 450);
             this.panel2.TabIndex = 2;
             // 
+            // scanScrollBar
+            // 
+            this.scanScrollBar.Location = new System.Drawing.Point(0, 419);
+            this.scanScrollBar.Name = "scanScrollBar";
+            this.scanScrollBar.Size = new System.Drawing.Size(585, 31);
+            this.scanScrollBar.TabIndex = 0;
+            // 
             // analyseButton
             // 
             this.analyseButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(169)))), ((int)(((byte)(164)))));
@@ -167,6 +174,7 @@
             this.analyseButton.TabIndex = 15;
             this.analyseButton.Text = "Analyse";
             this.analyseButton.UseVisualStyleBackColor = false;
+            this.analyseButton.Click += new System.EventHandler(this.analyseButton_Click);
             // 
             // uploadButton
             // 
@@ -210,13 +218,6 @@
             this.sliceNoButton.Text = "11/160";
             this.sliceNoButton.UseVisualStyleBackColor = false;
             // 
-            // scanScrollBar
-            // 
-            this.scanScrollBar.Location = new System.Drawing.Point(0, 419);
-            this.scanScrollBar.Name = "scanScrollBar";
-            this.scanScrollBar.Size = new System.Drawing.Size(585, 31);
-            this.scanScrollBar.TabIndex = 0;
-            // 
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(116)))), ((int)(((byte)(106)))));
@@ -230,36 +231,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(106, 148);
             this.panel3.TabIndex = 2;
-            // 
-            // results1Label
-            // 
-            this.results1Label.AutoSize = true;
-            this.results1Label.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.results1Label.Location = new System.Drawing.Point(29, 7);
-            this.results1Label.Name = "results1Label";
-            this.results1Label.Size = new System.Drawing.Size(49, 17);
-            this.results1Label.TabIndex = 0;
-            this.results1Label.Text = "Cancer";
-            // 
-            // results2Lab
-            // 
-            this.results2Lab.AutoSize = true;
-            this.results2Lab.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.results2Lab.Location = new System.Drawing.Point(11, 24);
-            this.results2Lab.Name = "results2Lab";
-            this.results2Lab.Size = new System.Drawing.Size(84, 17);
-            this.results2Lab.TabIndex = 1;
-            this.results2Lab.Text = "detected on:";
-            // 
-            // cancerSlidesLab
-            // 
-            this.cancerSlidesLab.AutoSize = true;
-            this.cancerSlidesLab.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancerSlidesLab.Location = new System.Drawing.Point(7, 41);
-            this.cancerSlidesLab.Name = "cancerSlidesLab";
-            this.cancerSlidesLab.Size = new System.Drawing.Size(95, 21);
-            this.cancerSlidesLab.TabIndex = 2;
-            this.cancerSlidesLab.Text = "5/160 slides";
             // 
             // cancerResultsLab
             // 
@@ -291,6 +262,36 @@
             this.results3Label.TabIndex = 3;
             this.results3Label.Text = "Current slide";
             // 
+            // cancerSlidesLab
+            // 
+            this.cancerSlidesLab.AutoSize = true;
+            this.cancerSlidesLab.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancerSlidesLab.Location = new System.Drawing.Point(7, 41);
+            this.cancerSlidesLab.Name = "cancerSlidesLab";
+            this.cancerSlidesLab.Size = new System.Drawing.Size(95, 21);
+            this.cancerSlidesLab.TabIndex = 2;
+            this.cancerSlidesLab.Text = "5/160 slides";
+            // 
+            // results2Lab
+            // 
+            this.results2Lab.AutoSize = true;
+            this.results2Lab.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.results2Lab.Location = new System.Drawing.Point(11, 24);
+            this.results2Lab.Name = "results2Lab";
+            this.results2Lab.Size = new System.Drawing.Size(84, 17);
+            this.results2Lab.TabIndex = 1;
+            this.results2Lab.Text = "detected on:";
+            // 
+            // results1Label
+            // 
+            this.results1Label.AutoSize = true;
+            this.results1Label.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.results1Label.Location = new System.Drawing.Point(29, 7);
+            this.results1Label.Name = "results1Label";
+            this.results1Label.Size = new System.Drawing.Size(49, 17);
+            this.results1Label.TabIndex = 0;
+            this.results1Label.Text = "Cancer";
+            // 
             // exportButton
             // 
             this.exportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(116)))), ((int)(((byte)(106)))));
@@ -305,7 +306,7 @@
             this.exportButton.Text = "Export";
             this.exportButton.UseVisualStyleBackColor = false;
             // 
-            // UPLOADSCAN
+            // uploadScanForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -325,7 +326,7 @@
             this.Controls.Add(this.logOutButton);
             this.Controls.Add(this.uploadScanButton);
             this.Controls.Add(this.panel1);
-            this.Name = "UPLOADSCAN";
+            this.Name = "uploadScanForm";
             this.Text = "UPLOAD SCAN";
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);

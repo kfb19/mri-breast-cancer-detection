@@ -10,76 +10,20 @@ using System.Windows.Forms;
 
 namespace frontend
 {
-    public partial class REGISTER : Form
+    public partial class registerForm : Form
     {
-        public REGISTER()
+        public registerForm()
         {
             InitializeComponent();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void gotoLoginButton_Click(object sender, EventArgs e)
         {
+            loginForm newLoginForm = new loginForm(); // Opens a 'login' page.
+            newLoginForm.Show();
 
-        }
-
-        private void username_label_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form2_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void log_in_button_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void click_to_reg_label_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void regLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void password_text_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void password_label_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void username_text_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {
-
+            this.Close();
         }
     }
+    
 }

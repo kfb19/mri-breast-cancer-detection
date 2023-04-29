@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace frontend
 {
-    public partial class UPLOADSCAN : Form
+    public partial class uploadScanForm : Form
     {
-        public UPLOADSCAN()
+        public uploadScanForm()
         {
             InitializeComponent();
         }
@@ -22,5 +22,9 @@ namespace frontend
 
         }
 
+        private void analyseButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
