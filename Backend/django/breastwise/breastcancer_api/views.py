@@ -90,7 +90,7 @@ def delete_folders():
 
     # Iterate over all the items in the folder
     for item in uploads_list:
-        item_path = os.path.join(uploads_folder,item)
+        item_path = os.path.join(uploads_folder, item)
 
         # Check if the item is a folder or a file
         if os.path.isdir(item_path):
