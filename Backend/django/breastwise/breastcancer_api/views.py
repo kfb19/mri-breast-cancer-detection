@@ -2,6 +2,7 @@
 
 import zipfile
 import os
+import shutil
 import numpy as np
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -87,25 +88,17 @@ def delete_folders():
     uploads_folder = "media/"
     uploads_list = os.listdir(uploads_folder)
 
-    # Loop through the file list and delete each file.
-    for folder in uploads_list:
-        if ".zip" not in folder and folder != "scantype_bmp":
-            folder_dir = uploads_folder + folder + "/"
-            os.chmod(folder_dir, 0o777)
-            files_in_folder = os.listdir(folder_dir)
-            for file in files_in_folder:
-                path = os.path.join(folder_dir, file)
-                os.remove(path)
-            os.removedirs(uploads_folder + folder)
-        elif (folder == "scantype_bmp"):
-            lst = os.listdir("media/" + folder + "/")
-            for fol in lst:
-                fol_files = os.listdir("media/" + folder + "/" + fol)
-                for i in fol_files:
-                    os.remove("media/" + folder + "/" + fol + "/" + i)
-                os.removedirs("media/" + folder + "/" + fol)
+    # Iterate over all the items in the folder
+    for item in uploads_list:
+        item_path = os.path.join(uploads_folder,item)
+
+        # Check if the item is a folder or a file
+        if os.path.isdir(item_path):
+            # Recursively remove the folder and its contents
+            shutil.rmtree(item_path)
         else:
-            os.remove("media/" + folder)
+            # Remove the file
+            os.remove(item_path)
 
 
 def scan():

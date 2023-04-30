@@ -24,7 +24,7 @@ namespace frontend
 
         }
 
-        private async Task uploadButton_ClickAsync(object sender, EventArgs e)
+        private async void uploadButton_ClickAsync(object sender, EventArgs e)
         {
             // Show the OpenFileDialog.
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -85,6 +85,11 @@ namespace frontend
                 }
 
             }
+
+        }
+
+        private void uploadScanButton_Click(object sender, EventArgs e)
+        {
 
         }
     }

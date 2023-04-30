@@ -291,6 +291,7 @@
             // uploadScanButton
             // 
             this.uploadScanButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(169)))), ((int)(((byte)(164)))));
+            this.uploadScanButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.uploadScanButton.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.uploadScanButton.FlatAppearance.BorderSize = 0;
             this.uploadScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -301,6 +302,7 @@
             this.uploadScanButton.TabIndex = 23;
             this.uploadScanButton.Text = "Upload Scan";
             this.uploadScanButton.UseVisualStyleBackColor = false;
+            this.uploadScanButton.Click += new System.EventHandler(this.uploadScanButton_Click);
             // 
             // panel1
             // 
