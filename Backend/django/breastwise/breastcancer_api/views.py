@@ -88,22 +88,27 @@ def delete_folders():
     # Get a list of all files in the folder
     uploads_folder = "media/"
     uploads_list = os.listdir(uploads_folder)
-    os.umask(0)
-    os.chmod(uploads_folder, stat.S_IWRITE)
 
-    # Iterate over all the items in the folder
-    for item in uploads_list:
-        item_path = os.path.join(uploads_folder, item)
-
-        # Check if the item is a folder or a file
-        if os.path.isdir(item_path):
-            # Recursively remove the folder and its contents
-            os.umask(0)
-            os.chmod(item_path, stat.S_IWRITE)
-            shutil.rmtree(item_path)
+    # Loop through the file list and delete each file.
+    for folder in uploads_list:
+        if ".zip" not in folder and folder != "scantype_bmp":
+            folder_dir = uploads_folder + folder + "/"
+            os.chmod(folder_dir, 0o777)
+            files_in_folder = os.listdir(folder_dir)
+            for file in files_in_folder:
+                path = os.path.join(folder_dir, file)
+                os.remove(path)
+            os.removedirs(uploads_folder + folder)
+        elif (folder == "scantype_bmp"):
+            lst = os.listdir("media/" + folder + "/")
+            for fol in lst:
+                fol_files = os.listdir("media/" + folder + "/" + fol)
+                for i in fol_files:
+                    os.remove("media/" + folder + "/" + fol + "/" + i)
+                os.chmod("media/" + folder + "/" + fol, 0o777)
+                os.removedirs("media/" + folder + "/" + fol)
         else:
-            # Remove the file
-            os.remove(item_path)
+            os.remove("media/" + folder)
 
 
 def scan():
@@ -206,7 +211,8 @@ def process_scantype(pass1_folder, pass2_folder, pass3_folder):
 
         mini_folder = os.path.join(scantype_bmp_path, f'{counter}')
         if not os.path.exists(mini_folder):
-            os.makedirs(mini_folder)
+            os.umask(0)
+            os.makedirs(mini_folder, mode=0o777)
         img_no = 0
         for pass_scan in array_of_three:
             # Create a path to save the slice .bmp file in.
