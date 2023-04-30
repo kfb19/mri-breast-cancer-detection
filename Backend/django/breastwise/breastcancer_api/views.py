@@ -9,6 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 import pydicom
+import stat
 import torch
 from torchvision.models import vgg19
 from torchvision import transforms
@@ -87,6 +88,8 @@ def delete_folders():
     # Get a list of all files in the folder
     uploads_folder = "media/"
     uploads_list = os.listdir(uploads_folder)
+    os.umask(0)
+    os.chmod(uploads_folder, stat.S_IWRITE)
 
     # Iterate over all the items in the folder
     for item in uploads_list:
@@ -95,6 +98,8 @@ def delete_folders():
         # Check if the item is a folder or a file
         if os.path.isdir(item_path):
             # Recursively remove the folder and its contents
+            os.umask(0)
+            os.chmod(item_path, stat.S_IWRITE)
             shutil.rmtree(item_path)
         else:
             # Remove the file
