@@ -1,9 +1,9 @@
-# serializers.py
+""" The serialiser module. """
 from rest_framework import serializers
 
-from .models import User
+from .models import File
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ('user_id', 'first_name', 'last_name', 'password')
+class FileSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = File
+        fields = ('file', )

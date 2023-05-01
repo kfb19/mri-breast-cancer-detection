@@ -1,14 +1,11 @@
+""" This class declares the models for use in the API. """
+
 from django.db import models
-
-# Create your models here.
-# models.py
-from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
-class User(models.Model):
-    user_id = models.CharField(max_length=60)
-    first_name = models.CharField(max_length=60)
-    last_name = models.CharField(max_length=60)
-    password = models.CharField(max_length=60)
-    def __str__(self):
-        return self.user_id
+# pylint: disable=E0307
+class File(models.Model):
+    """ Model for the scan results. """
+    file = models.FileField(blank=False, null=False)
+

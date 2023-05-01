@@ -1,2 +1,0 @@
-Target labels:[1, 0, 1, 0, 1, 0, 1, 0, 0, 0]
-Classifier predictions:[1, 0, 1, 0, 1, 0, 1, 0, 0, 0]
