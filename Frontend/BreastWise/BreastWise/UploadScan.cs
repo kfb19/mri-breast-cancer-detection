@@ -151,7 +151,8 @@ namespace BreastWise
 
                                 pictureBox = new PictureBox();
                                 pictureBox.Image = Image.FromStream(ms);
-                                pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
+                                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                                pictureBox.Dock = DockStyle.Fill;
                                 pictureBox.Anchor = AnchorStyles.None;
                                 pictureBox.Location = new Point((scanPanel.Width - pictureBox.Width) / 2, (scanPanel.Height - pictureBox.Height) / 2);
                                 scanPanel.Controls.Add(pictureBox);
