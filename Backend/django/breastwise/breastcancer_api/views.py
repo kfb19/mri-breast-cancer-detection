@@ -2,14 +2,12 @@
 
 import zipfile
 import os
-import shutil
 import numpy as np
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 import pydicom
-import stat
 import torch
 from torchvision.models import vgg19
 from torchvision import transforms
@@ -100,13 +98,13 @@ def delete_folders():
                 os.remove(path)
             os.removedirs(uploads_folder + folder)
         elif (folder == "scantype_bmp"):
-            lst = os.listdir("media/" + folder + "/")
+            lst = os.listdir(uploads_folder + folder + "/")
             for fol in lst:
-                fol_files = os.listdir("media/" + folder + "/" + fol)
+                fol_files = os.listdir(uploads_folder + folder + "/" + fol)
                 for i in fol_files:
-                    os.remove("media/" + folder + "/" + fol + "/" + i)
-                os.chmod("media/" + folder + "/" + fol, 0o777)
-                os.removedirs("media/" + folder + "/" + fol)
+                    os.remove(uploads_folder + folder + "/" + fol + "/" + i)
+                os.chmod(uploads_folder + folder + "/" + fol, 0o777)
+                os.removedirs(uploads_folder + folder + "/" + fol)
         else:
             os.remove("media/" + folder)
 
