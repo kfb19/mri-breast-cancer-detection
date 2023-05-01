@@ -349,24 +349,34 @@ namespace BreastWise
             }
         }
 
-        private void resultsLab_Click(object sender, EventArgs e)
+        private void exportBtn_Click(object sender, EventArgs e)
         {
+            if (cancerousSlices != null && cancerousSlices.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Cancerous Slices:");
 
+                foreach (int slice in cancerousSlices)
+                {
+                    sb.AppendLine(slice.ToString());
+                }
+
+                File.WriteAllText("cancerous_slices.csv", sb.ToString());
+                MessageBox.Show("Export successful!");
+            }
+            else if (cancerousSlices != null && cancerousSlices.Count == 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Cancerous Slices: None");
+
+                File.WriteAllText("cancerous_slices.csv", sb.ToString());
+                MessageBox.Show("Export successful!");
+            }
+            else
+            {
+                MessageBox.Show("Scan not analysed.");
+            }
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void statusLab1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void statusLab2_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

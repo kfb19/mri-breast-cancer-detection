@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\BreastWise\\BreastWise\\BreastWise.csproj": {}
+    "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\breast-cancer-detection-localisation\\Frontend\\BreastWise\\BreastWise\\BreastWise.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\BreastWise\\BreastWise\\BreastWise.csproj": {
+    "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\breast-cancer-detection-localisation\\Frontend\\BreastWise\\BreastWise\\BreastWise.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\BreastWise\\BreastWise\\BreastWise.csproj",
+        "projectUniqueName": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\breast-cancer-detection-localisation\\Frontend\\BreastWise\\BreastWise\\BreastWise.csproj",
         "projectName": "BreastWise",
-        "projectPath": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\BreastWise\\BreastWise\\BreastWise.csproj",
+        "projectPath": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\breast-cancer-detection-localisation\\Frontend\\BreastWise\\BreastWise\\BreastWise.csproj",
         "packagesPath": "C:\\Users\\kate\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\BreastWise\\BreastWise\\obj\\",
+        "outputPath": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\breast-cancer-detection-localisation\\Frontend\\BreastWise\\BreastWise\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -24,9 +24,9 @@
     </frameworkReferences>
   </metadata>
   <files>
-    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.runtimeconfig.json" target="lib\net6.0-windows7.0\BreastWise.runtimeconfig.json" />
-    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.dll" target="lib\net6.0-windows7.0\BreastWise.dll" />
-    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.xml" target="lib\net6.0-windows7.0\BreastWise.xml" />
-    <file src="C:\Users\kate\Downloads\breastwise.png" target="\breastwise.png" />
+    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.runtimeconfig.json" target="lib\net6.0-windows7.0\BreastWise.runtimeconfig.json" />
+    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.dll" target="lib\net6.0-windows7.0\BreastWise.dll" />
+    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.xml" target="lib\net6.0-windows7.0\BreastWise.xml" />
+    <file src="C:\Users\kate\OneDrive\Desktop\Downloads\breastwise.png" target="\breastwise.png" />
   </files>
 </package>

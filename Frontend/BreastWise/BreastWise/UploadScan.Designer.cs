@@ -116,6 +116,7 @@
             exportBtn.TabIndex = 3;
             exportBtn.Text = "Export";
             exportBtn.UseVisualStyleBackColor = false;
+            exportBtn.Click += exportBtn_Click;
             // 
             // deleteBtn
             // 
@@ -195,7 +196,6 @@
             resultsLab.Size = new Size(130, 30);
             resultsLab.TabIndex = 0;
             resultsLab.Text = "View Results";
-            resultsLab.Click += resultsLab_Click;
             // 
             // countPan
             // 
@@ -260,7 +260,6 @@
             statusLab3.Size = new Size(180, 25);
             statusLab3.TabIndex = 3;
             statusLab3.Text = "Current slice status:";
-            statusLab3.Click += label3_Click;
             // 
             // cancerSliceLab
             // 
@@ -268,7 +267,7 @@
             cancerSliceLab.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
             cancerSliceLab.Location = new Point(68, 69);
             cancerSliceLab.Name = "cancerSliceLab";
-            cancerSliceLab.Size = new Size(82, 30);
+            cancerSliceLab.Size = new Size(97, 30);
             cancerSliceLab.TabIndex = 2;
             cancerSliceLab.Text = "0 SLICES";
             // 
@@ -281,7 +280,6 @@
             statusLab2.Size = new Size(177, 25);
             statusLab2.TabIndex = 1;
             statusLab2.Text = "Cancer detected in:";
-            statusLab2.Click += statusLab2_Click;
             // 
             // statusLab1
             // 
@@ -291,7 +289,6 @@
             statusLab1.Name = "statusLab1";
             statusLab1.Size = new Size(0, 17);
             statusLab1.TabIndex = 0;
-            statusLab1.Click += statusLab1_Click;
             // 
             // UploadScan
             // 

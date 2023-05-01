@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bYUZe/hrBSnrgxUfXOv44xN/Pr/f9RWqIv7EQFfOpEORRM6bgB6VZRJ8OcNMRMekJHBHtVKknfGru4xDbpZKbQ==",
+  "dgSpecHash": "2+hdwJ4RRVQC0hlZKRqT2xPKDmtaOeZPpJVt/TJrcD//Q/RXwRj2XsDO6Y2OL6hZg2vS996VbUshJvVetaS+Qw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\BreastWise\\BreastWise\\BreastWise.csproj",
+  "projectFilePath": "C:\\Users\\kate\\OneDrive\\Desktop\\University\\Final-Year-Project\\breast-cancer-detection-localisation\\Frontend\\BreastWise\\BreastWise\\BreastWise.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kate\\.nuget\\packages\\aspose.imaging\\23.4.0\\aspose.imaging.23.4.0.nupkg.sha512",
     "C:\\Users\\kate\\.nuget\\packages\\fo-dicom\\5.0.3\\fo-dicom.5.0.3.nupkg.sha512",
