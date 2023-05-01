@@ -1,9 +1,0 @@
-Test set accuracy: 0.894
-True positive classifications: 1320
-False positive classifications: 138
-True negative classifications: 1362
-False negative classifications: 180
-Negative predictive value: 0.8832684824902723
-Positive predictive value: 0.9053497942386831
-Sensitivity: 0.88
-Specificity: 0.908
