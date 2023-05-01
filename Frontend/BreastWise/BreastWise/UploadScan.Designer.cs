@@ -236,7 +236,7 @@
             // 
             cancerStatusLab.AutoSize = true;
             cancerStatusLab.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
-            cancerStatusLab.Location = new Point(47, 150);
+            cancerStatusLab.Location = new Point(21, 140);
             cancerStatusLab.Name = "cancerStatusLab";
             cancerStatusLab.Size = new Size(114, 30);
             cancerStatusLab.TabIndex = 5;
@@ -265,7 +265,7 @@
             // 
             cancerSliceLab.AutoSize = true;
             cancerSliceLab.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
-            cancerSliceLab.Location = new Point(68, 69);
+            cancerSliceLab.Location = new Point(21, 68);
             cancerSliceLab.Name = "cancerSliceLab";
             cancerSliceLab.Size = new Size(97, 30);
             cancerSliceLab.TabIndex = 2;
