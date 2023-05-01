@@ -1,3 +1,3 @@
-Add the CNN models to this file. 
+Add the CNN models to the nets folder after downloading them.
 
-Download link:
+Download link: https://gofile.me/70KJE/CKIOKiVso
