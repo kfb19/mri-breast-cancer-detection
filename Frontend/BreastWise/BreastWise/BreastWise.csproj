@@ -16,10 +16,15 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>breast cancer detection; cnn; forms; frontend; breastwise;</PackageTags>
     <PackageReleaseNotes>Version 1.0.0 of Breastwise, implementing a frontend for the API. </PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\..\..\..\..\Downloads\breastwise.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

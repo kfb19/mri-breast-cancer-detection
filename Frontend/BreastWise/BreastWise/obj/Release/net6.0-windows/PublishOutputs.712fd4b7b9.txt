@@ -1,0 +1,15 @@
+C:\Users\kate\OneDrive\Desktop\BreastWise.exe
+C:\Users\kate\OneDrive\Desktop\BreastWise.dll
+C:\Users\kate\OneDrive\Desktop\BreastWise.deps.json
+C:\Users\kate\OneDrive\Desktop\BreastWise.runtimeconfig.json
+C:\Users\kate\OneDrive\Desktop\BreastWise.pdb
+C:\Users\kate\OneDrive\Desktop\Aspose.Imaging.dll
+C:\Users\kate\OneDrive\Desktop\fo-dicom.core.dll
+C:\Users\kate\OneDrive\Desktop\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\kate\OneDrive\Desktop\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\kate\OneDrive\Desktop\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\kate\OneDrive\Desktop\Microsoft.Extensions.Options.dll
+C:\Users\kate\OneDrive\Desktop\Microsoft.Extensions.Primitives.dll
+C:\Users\kate\OneDrive\Desktop\Microsoft.Toolkit.HighPerformance.dll
+C:\Users\kate\OneDrive\Desktop\Newtonsoft.Json.dll
+C:\Users\kate\OneDrive\Desktop\BreastWise.xml
