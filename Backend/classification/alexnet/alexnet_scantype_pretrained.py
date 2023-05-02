@@ -162,10 +162,10 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
-    results_path = "E:\\data\\output\\results\\alexnet_scantype_pretrained"
-    save_file = "E:\\data\\output\\nets\\alexnet_scantype_pretrained.pth"
-    file_name = "alexnet_scantype_pretrained.txt"
+    data_dir = 'PATH\\bmp_out_scantype_classify'
+    results_path = 'PATH\\results\\alexnet_scantype_pretrained'
+    save_file = 'PATH\\nets\\alexnet_scantype_pretrained.pth'
+    file_name = 'alexnet_scantype_pretrained.txt'
     folder = "alexnet_scantype_pretrained"
 
     # Length in pixels of size of image once resized for the network.

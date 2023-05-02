@@ -151,10 +151,10 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\alexnet_single_pretrained"
-    save_file = "E:\\data\\output\\nets\\alexnet_single_pretrained.pth"
-    file_name = "alexnet_single_pretrained.txt"
+    data_dir = 'PATH\\bmp_out_single_classify'
+    results_path = 'PATH\\results\\alexnet_single_pretrained'
+    save_file = 'PATH\\nets\\alexnet_single_pretrained.pth'
+    file_name = 'alexnet_single_pretrained.txt'
     folder = "alexnet_single_pretrained"
 
     # Length in pixels of size of image once resized for the network.
