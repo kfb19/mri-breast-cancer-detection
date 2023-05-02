@@ -428,7 +428,7 @@ def main():
     plt.savefig(graph_path)
     plt.close()
 
-    # Define some requirec counts.
+    # Define some required counts.
     total_test_examples = 0
     num_correct_test = 0
 
