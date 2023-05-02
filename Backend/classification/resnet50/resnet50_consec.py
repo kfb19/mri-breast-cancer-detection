@@ -161,11 +161,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_consec"
-    save_file = "E:\\data\\output\\nets\\resnet50_consec.pth"
-    file_name = "resnet50_cosnec.txt"
-    folder = "resnet50_consec"
+    data_dir = 'PATH\\bmp_out_consec_classify'
+    results_path = 'PATH\\output\\results\\resnet50_consec'
+    save_file = 'PATH\\nets\\resnet50_consec.pth'
+    file_name = 'resnet50_cosnec.txt'
+    folder = 'resnet50_consec'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

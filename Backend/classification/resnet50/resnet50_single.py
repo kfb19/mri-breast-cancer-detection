@@ -149,11 +149,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_single"
-    save_file = "E:\\data\\output\\nets\\resnet50_single.pth"
-    file_name = "resnet50_single.txt"
-    folder = "resnet50_single"
+    data_dir = 'PATH\\bmp_out_single_classify'
+    results_path = 'PATH\\results\\resnet50_single'
+    save_file = 'PATH\\nets\\resnet50_single.pth'
+    file_name = 'resnet50_single.txt'
+    folder = 'resnet50_single'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
