@@ -27,7 +27,8 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 
 X_FRAME_OPTIONS = 'DENY'
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://*.sarahrachelhill.co.uk', 'http://localhost:1337', 'http://127.0.0.1:1337']
+CSRF_TRUSTED_ORIGINS = ['https://*.breast-wise.co.uk',
+                        'http://localhost:1337', 'http://127.0.0.1:1337']
 
 
 # Application definition

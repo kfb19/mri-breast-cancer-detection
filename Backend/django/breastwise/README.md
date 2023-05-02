@@ -18,6 +18,8 @@ Go to the project directory.
   cd breastwise
 ```
 
+Add your secret key to .env.prod by generating a string of length 50 at this site: http://www.unit-conversion.info/texttools/random-string-generator/
+
 Run this command to run the API in docker. 
 
 ```bash

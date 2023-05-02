@@ -1,57 +1,72 @@
-""" This module tests the API framework. """
+""" Test file. """
 
-from unittest.mock import patch
-from django.test import TestCase
-from rest_framework import status
-from rest_framework.test import APIClient
+import os
+import shutil
+import unittest
+from unittest import mock
+
+from .views import FileView
 
 
-class TestFileView(TestCase):
-    """ This class sets up the testing framework. """
-
+class TestFileView(unittest.TestCase):
+    """ Test class. """
     def setUp(self):
-        """ Defines the API client. """
-        self.client = APIClient()
+        """ Test set up. """
+        self.file_view = FileView()
+        self.test_data = {
+            'file': open('media/test.zip', 'rb'),
+            'name': 'test.zip'
+        }
 
-    @patch('os.listdir')
-    def test_post_request_with_valid_file(self, mock_listdir):
-        """ Tests valid file request.
+    def tearDown(self):
+        """ Test case. """
+        shutil.rmtree('media')
 
-        Args:
-            mock_listdir: a mock list of directories.
-        """
-        # Arrange.
-        mock_listdir.return_value = ['pre', '1st_pass', '2nd_pass', '3rd_pass']
-        file_path = 'path/to/valid/file.zip'
-        with open(file_path, 'rb') as file:
-            data = {'file': file}
-            expected_response = {'result': 'expected response'}
-
-        # Act.
-        response = self.client.post('/api/file/', data, format='multipart')
-
-        # Assert.
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data, expected_response)
-
-    @patch('os.listdir')
-    def test_post_request_with_invalid_file(self, mock_listdir):
-        """ Tests invalid file request.
-
-        Args:
-            mock_listdir: a mock list of directories.
-        """
-        # Arrange.
+    @mock.patch('os.listdir')
+    def test_post_missing_zip_file(self, mock_listdir):
+        """ Test case. """
         mock_listdir.return_value = []
-        file_path = 'path/to/invalid/file.zip'
-        with open(file_path, 'rb') as file:
-            data = {'file': file}
-            expected_response = {
-                'detail': 'Invalid file name: no series.zip found'}
+        response = self.file_view.post(None)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, "Invalid file name: no series.zip found")
 
-        # Act.
-        response = self.client.post('/api/file/', data, format='multipart')
+    @mock.patch('os.listdir')
+    def test_post_missing_folders(self, mock_listdir):
+        """ Test case. """
+        mock_listdir.side_effect = [['series.zip'], []]
+        response = self.file_view.post(None)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, "Invalid folder structure.")
 
-        # Assert.
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, expected_response)
+    @mock.patch('os.listdir')
+    def test_post_multiple_folders(self, mock_listdir):
+        """ Test case. """
+        mock_listdir.side_effect = [['series.zip'], ['1st_pass', '2nd_pass', '3rd_pass', 'pre'], ['1st_pass', '2nd_pass', 'pre'], ['pre']]
+        response = self.file_view.post(None)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, "Invalid folder structure.")
+
+    @mock.patch('os.listdir')
+    @mock.patch('zipfile.ZipFile.extractall')
+    def test_post_valid_file(self, mock_extractall, mock_listdir):
+        """ Test case. """
+        mock_listdir.side_effect = [['series.zip'], ['1st_pass', '2nd_pass', '3rd_pass', 'pre']]
+        response = self.file_view.post(None)
+        self.assertEqual(response.status_code, 201)
+
+    def test_delete_folders(self):
+        """ Test case. """
+        os.mkdir('media')
+        os.mkdir('media/temp')
+        os.mkdir('media/scantype_bmp')
+        os.mkdir('media/scantype_bmp/folder1')
+        os.mkdir('media/scantype_bmp/folder2')
+        with open('media/temp/test.txt', 'w') as f:
+            f.write('test')
+        with open('media/scantype_bmp/folder1/test.txt', 'w') as f:
+            f.write('test')
+        with open('media/scantype_bmp/folder2/test.txt', 'w') as f:
+            f.write('test')
+        FileView.delete_folders()
+        self.assertFalse(os.path.exists('media/temp'))
+        self.assertFalse(os.path.exists('media/scantype_bmp'))
