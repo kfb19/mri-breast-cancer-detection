@@ -161,11 +161,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'PATH_TO\\bmp_out_scantype_classify'
-    results_path = "PATH_TO\\results\\vgg_scantype"
-    save_file = "PATH_TO\\nets\\vgg_scantype_vid.pth"
-    file_name = "vgg_scantype.txt"
-    folder = "vgg_scantype"
+    data_dir = 'PATH\\bmp_out_scantype_classify'
+    results_path = 'PATH\\results\\vgg_scantype'
+    save_file = 'PATH\\nets\\vgg_scantype_vid.pth'
+    file_name = 'vgg_scantype.txt'
+    folder = 'vgg_scantype'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

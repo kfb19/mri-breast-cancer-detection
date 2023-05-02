@@ -162,11 +162,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
-    results_path = "E:\\data\\output\\results\\vgg_scantype_pretrained"
-    save_file = "E:\\data\\output\\nets\\vgg_scantype_pretrained.pth"
-    file_name = "vgg_cosnec_pretrained.txt"
-    folder = "vgg_scantype_pretrained"
+    data_dir = 'PATH\\bmp_out_scantype_classify'
+    results_path = 'PATH\\results\\vgg_scantype_pretrained'
+    save_file = 'PATH\\nets\\vgg_scantype_pretrained.pth'
+    file_name = 'vgg_cosnec_pretrained.txt'
+    folder = 'vgg_scantype_pretrained'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

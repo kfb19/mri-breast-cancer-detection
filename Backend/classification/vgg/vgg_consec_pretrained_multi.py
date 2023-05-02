@@ -162,11 +162,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'PATH_TO\\bmp_out_consec_classify'
-    results_path = "PATH_TO\\\\results\\vgg_consec_pretrained_multi"
-    save_file = "PATH_TO\\nets\\vgg_consec_pretrained_multi.pth"
-    file_name = "vgg_consec_pretrained_multi.txt"
-    folder = "vgg_consec_pretrained_multi"
+    data_dir = 'PATH\\bmp_out_consec_classify'
+    results_path = 'PATH\\results\\vgg_consec_pretrained_multi'
+    save_file = 'PATH\\nets\\vgg_consec_pretrained_multi.pth'
+    file_name = 'vgg_consec_pretrained_multi.txt'
+    folder = 'vgg_consec_pretrained_multi'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

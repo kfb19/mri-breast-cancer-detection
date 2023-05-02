@@ -151,11 +151,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\vgg_single_pretrained"
-    save_file = "E:\\data\\output\\nets\\vgg_single_pretrained.pth"
-    file_name = "vgg_single_pretrained.txt"
-    folder = "vgg_single_pretrained"
+    data_dir = 'PATH\\bmp_out_single_classify'
+    results_path = 'PATH\\results\\vgg_single_pretrained'
+    save_file = 'PATH\\nets\\vgg_single_pretrained.pth'
+    file_name = 'vgg_single_pretrained.txt'
+    folder = 'vgg_single_pretrained'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
