@@ -162,9 +162,9 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
-    results_path = "E:\\data\\output\\results\\vgg_consec_pretrained_multi"
-    save_file = "E:\\data\\output\\nets\\vgg_consec_pretrained_multi.pth"
+    data_dir = 'PATH_TO\\bmp_out_consec_classify'
+    results_path = "PATH_TO\\\\results\\vgg_consec_pretrained_multi"
+    save_file = "PATH_TO\\nets\\vgg_consec_pretrained_multi.pth"
     file_name = "vgg_consec_pretrained_multi.txt"
     folder = "vgg_consec_pretrained_multi"
 

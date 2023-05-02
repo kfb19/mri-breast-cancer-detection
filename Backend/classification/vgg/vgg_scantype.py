@@ -161,9 +161,9 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
-    results_path = "E:\\data\\output\\results\\vgg_scantype"
-    save_file = "E:\\data\\output\\nets\\vgg_scantype.pth"
+    data_dir = 'PATH_TO\\bmp_out_scantype_classify'
+    results_path = "PATH_TO\\results\\vgg_scantype"
+    save_file = "PATH_TO\\nets\\vgg_scantype_vid.pth"
     file_name = "vgg_scantype.txt"
     folder = "vgg_scantype"
 
