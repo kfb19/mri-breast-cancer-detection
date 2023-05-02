@@ -132,7 +132,7 @@ def scan():
     process_scantype(pass1_folder, pass2_folder, pass3_folder)
 
     single_results = analyse_single()
-    
+
     scantype_results = analyse_scantype()
     results = average_results(single_results, scantype_results)
 
@@ -288,11 +288,12 @@ def analyse_single():
             data_tensor = transforms.Resize(
                 (128, 128))(data_tensor)
             # Run through net & append results to results
-            checkpoint = torch.load("nets/vgg_single_pretrained.pth", map_location=torch.device('cpu'))
-            
+            checkpoint = torch.load("nets/vgg_single_pretrained.pth",
+                                    map_location=torch.device('cpu'))
+
             # Define the convoluted neural network.
             net = vgg19(weights=VGG19_Weights.IMAGENET1K_V1)
-            
+
             # Modify the first convolutional layer to accept one channel input.
             net.features[0] = nn.Conv2d(1, 64, kernel_size=(7, 7),
                                         stride=(2, 2), padding=(3, 3),
@@ -355,7 +356,8 @@ def analyse_scantype():
         group = []
 
         # Run through net & append results to results
-        checkpoint = torch.load("nets/vgg_scantype.pth", map_location=torch.device('cpu'))
+        checkpoint = torch.load("nets/vgg_scantype.pth",
+                                map_location=torch.device('cpu'))
 
         # Define the convoluted neural network.
         net = vgg19(weights=None)
