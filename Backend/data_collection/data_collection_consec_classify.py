@@ -135,7 +135,7 @@ def main():
     data_path = 'PATH\\manifest-1675379375384'
     boxes_path = 'PATH\\csvs\\Annotation_Boxes.csv'
     mapping_path = 'PATH\\csvs\\Breast-Cancer-MRI-mapping.csv'
-    target_bmp_dir = 'PATH\\output\\bmp_out_consec_classify'
+    target_bmp_dir = 'PATH\\bmp_out_consec_classify'
     if not os.path.exists(target_bmp_dir):
         os.makedirs(target_bmp_dir)
 
