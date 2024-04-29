@@ -1,7 +1,7 @@
 
 # Breast Cancer Detection - Data Collection, Training, API and Frontend 
 
-The project includes various components such as data collection, CNN training, and an API and frontend for breast cancer detection. It also encompasses experiments on different types of convolutional neural networks. 
+The project includes various components such as data collection, CNN training, and an API for breast cancer detection. It also encompasses experiments on different types of convolutional neural networks. 
 
 
 ## Installation
@@ -37,7 +37,7 @@ To run the CNN training:
   python chosen_cnn_to_train.py 
 ```
 
-Please view the READMEs for the API and the frontend for information on how to run locally. 
+Please view the README for the API for information on how to run locally. 
 
 ## File Structure
 
@@ -74,15 +74,6 @@ data_collection_single_classify.py (single channel image input data)
 
 This folder contains the code for the API. Please see the API README for more information. 
 
-### Frontend 
-
-#### BreastWise 
-
-This folder contains the code for the frontend. Please see the frontend README for more information. 
-
-#### webpage 
-
-This folder contains the HTML page and relevant files for the site hosted at https://download.breast-wise.co.uk/ .
 ## Developer Documentation
 
 ### Data Collection Functions 
@@ -139,7 +130,7 @@ This function calls the ScanDataset class to create data loaders for training, v
 
 ### API and Frontend Functions 
 
-Please see the API and Frontend READMEs for more information on their specific functions. 
+Please see the API README for more information on its specific functions. 
 ## Features
 
 - Data collection for single, consecutive and scantype CNNs.
@@ -148,22 +139,22 @@ Please see the API and Frontend READMEs for more information on their specific f
 - Training for several DenseNet201 models.
 - Training for several AlexNet models.
 - A Django API using the resulting best models. 
-- A C# Windows Forms frontend to visually use the API. 
-
 
 ## Tech
 
-The code was developed in Visual Studio Code and Visual Studio 2022 (C# Windows Forms). It was mostly written in Python 3.10.7, using PyTorch 1.13.1+cu116. The API was developed in Django, using Nginx and Gunicorn to run in Docker (please view the API README file for more information). 
+The code was developed in Visual Studio Code. It was written in Python 3.10.7, using PyTorch 1.13.1+cu116. The API was developed in Django, using Nginx and Gunicorn to run in Docker (please view the API README file for more information). 
 
 ## Support
 
-For support, email kfb206@exeter.ac.uk .
+For support, email kate.belson@hotmail.com .
 
 
 ## Authors
 
 - [Kate Belson](https://github.com/kfb19)
 
+## References
+(TO DO)
 
 ## License
 

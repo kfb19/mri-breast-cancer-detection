@@ -2,15 +2,8 @@
 # BreastWise API
 
 BreastWise API is a Django application for the detection of Breast Cancer in MRI scans. It uses two VGG19 models with different input channel types to detect cancer on a scan slice-by-slice basis. 
-
-
-## Installation
-
-Install the project by downloading the ZIP file from https://download.breast-wise.co.uk/ . 
     
 ## Run Locally
-
-Unzip the project and install Docker. 
 
 Go to the project directory. 
 
@@ -125,7 +118,7 @@ To run the unit tests tests, run the following command in the breastiwse\app dir
 
 ## Support
 
-For support, email kfb206@exeter.ac.uk .
+For support, email kate.belson@hotmail.com .
 
 
 ## License
