@@ -153,8 +153,27 @@ For support, email kate.belson@hotmail.com .
 
 - [Kate Belson](https://github.com/kfb19)
 
-## References
-(TO DO)
+## Code References
+
+Al Husaini, M.A.S., Habaebi, M.H., Gunawan, T.S., Islam, M.R., Hameed, S.A.: Automatic Breast Cancer Detection Using Inception V3 in Thermography. In: 2021 8th International Conference on Computer and Communication Engineering (ICCCE), pp. 255–258 (2021). IEEE
+
+Eskreis-Winkler, S., Onishi, N., Pinker, K., Reiner, J.S., Kaplan, J., Morris, E.A., Sutton, E.J.: Using Deep Learning to Improve Non-systematic Viewing of Breast Cancer on MRI. Journal of Breast Imaging 3(2), 201–207 (2021) https://doi.org/10.1093/jbi/wbaa102 https://academic.oup.com/jbi/article-pdf/3/2/201/36648790/wbaa102.pdf
+
+Goncalves, C.B., Souza, J.R., Fernandes, H.: Classification of Static Infrared Images using Pre-Trained CNN for Breast Cancer Detection. In: 2021 IEEE 34th International Symposium on Computer-Based Medical Systems (CBMS), pp. 101–106 (2021). IEEE
+
+Hui, L., Belkin, M.: Evaluation of Neural Architectures Trained with Square Loss vs Cross-Entropy in Classification Tasks. arXiv preprint arXiv:2006.07322 (2020)
+
+Konz, N.: Train a Neural Network to Detect Breast MRI Tumors with PyTorch. 22 Towards Data Science (2022). Accessed: 15-04-23
+
+Mahoro, E., Akhloufi, M.A.: Breast Cancer Classification on Thermograms Using Deep CNN and Transformers. Quantitative InfraRed Thermography Journal 0(0), 1–20 (2022) https://doi.org/10.1080/17686733.2022.2129135
+
+Nguyen, B.H., Le, B., Huynh, T., Le, H., Pham, T.H.: Breast Cancer Diagnosis Based on Detecting Lymph Node Metastases Using Deep Learning. VNUHCM Journal of Science and Technology Development 25(2), 2381–2389 (2022) https: //doi.org/10.32508/stdj.v25i2.3894
+
+Saha, A., Harowicz, M., Grimm, L., Kim, C., Ghate, S., Walsh, R., Mazurowski, M.: A Machine Learning Approach to Radiogenomics of Breast Cancer: a Study of 922 Subjects and 529 DCE-MRI Features. The British Journal of Cancer 119(4), 508–516 (2018)
+
+Saha, A., Harowicz, M., Grimm, L., Weng, J., Cain, E., Kim, C., Ghate, S., Walsh, R., Mazurowski, M.: Dynamic Contrast-Enhanced Magnetic Resonance Images of Breast Cancer Patients with Tumor Locations \[Dataset]. The Cancer Imaging Archive (2021)
+
+Truhn, D., Schrading, S., Haarburger, C., Schneider, H., Merhof, D., Kuhl, C.: Radiomic versus Convolutional Neural Networks Analysis for Classification of Contrast-Enhancing Lesions at Multiparametric Breast MRI. Radiology 290(2), 290–297 (2019) https://doi.org/10.1148/radiol.2018181352
 
 ## License
 
