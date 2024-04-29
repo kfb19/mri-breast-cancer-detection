@@ -150,11 +150,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\vgg_single"
-    save_file = "E:\\data\\output\\nets\\vgg_single.pth"
-    file_name = "vgg_single.txt"
-    folder = "vgg_single"
+    data_dir = 'PATH\\bmp_out_single_classify'
+    results_path = 'PATH\\results\\vgg_single'
+    save_file = 'PATH\\nets\\vgg_single.pth'
+    file_name = 'vgg_single.txt'
+    folder = 'vgg_single'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128
@@ -428,7 +428,7 @@ def main():
     plt.savefig(graph_path)
     plt.close()
 
-    # Define some requirec counts.
+    # Define some required counts.
     total_test_examples = 0
     num_correct_test = 0
 

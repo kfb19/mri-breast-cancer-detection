@@ -162,11 +162,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
-    results_path = "E:\\data\\output\\results\\resnet50_consec_pretrained"
-    save_file = "E:\\data\\output\\nets\\resnet50_consec_pretrained.pth"
-    file_name = "resnet50_consec_pretrained.txt"
-    folder = "resnet50_consec_pretrained"
+    data_dir = 'PATH\\bmp_out_consec_classify'
+    results_path = 'PATH\\results\\resnet50_consec_pretrained'
+    save_file = 'PATH\\nets\\resnet50_consec_pretrained.pth'
+    file_name = 'resnet50_consec_pretrained.txt'
+    folder = 'resnet50_consec_pretrained'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

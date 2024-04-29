@@ -125,10 +125,10 @@ def main():
     consecutive 3 channel images.
     """
     # Setting file paths needed for using the data.
-    data_path = 'E:\\data\\manifest-1675379375384'
-    boxes_path = 'E:\\data\\csvs\\Annotation_Boxes.csv'
-    mapping_path = 'E:\\data\\csvs\\Breast-Cancer-MRI-mapping.csv'
-    target_bmp_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
+    data_path = 'PATH\\manifest-1675379375384'
+    boxes_path = 'PATH\\csvs\\Annotation_Boxes.csv'
+    mapping_path = 'PATH\\csvs\\Breast-Cancer-MRI-mapping.csv'
+    target_bmp_dir = 'PATH\\bmp_out_scantype_classify'
     if not os.path.exists(target_bmp_dir):
         os.makedirs(target_bmp_dir)
 

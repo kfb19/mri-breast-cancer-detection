@@ -150,11 +150,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_single_classify'
-    results_path = "E:\\data\\output\\results\\densenet_single_multi"
-    save_file = "E:\\data\\output\\nets\\densenet_single_multi.pth"
-    file_name = "densenet_single_multi.txt"
-    folder = "densenet_single_multi"
+    data_dir = 'PATH\\bmp_out_single_classify'
+    results_path = 'PATH\\results\\densenet_single_multi'
+    save_file = 'PATH\\nets\\densenet_single_multi.pth'
+    file_name = 'densenet_single_multi.txt'
+    folder = 'densenet_single_multi'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

@@ -162,11 +162,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_consec_classify'
-    results_path = "E:\\data\\output\\results\\densenet_consec_pretrained"
-    save_file = "E:\\data\\output\\nets\\densenet_consec_pretrained.pth"
-    file_name = "densenet_consec_pretrained.txt"
-    folder = "densenet_consec_pretrained"
+    data_dir = 'PATH\\bmp_out_consec_classify'
+    results_path = 'PATH\\results\\densenet_consec_pretrained'
+    save_file = 'PATH\\nets\\densenet_consec_pretrained.pth'
+    file_name = 'densenet_consec_pretrained.txt'
+    folder = 'densenet_consec_pretrained'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

@@ -148,10 +148,9 @@ namespace BreastWise
                             {
                                 var bmpOptions = new Aspose.Imaging.ImageOptions.BmpOptions();
                                 dicomImage.Save(ms, bmpOptions);
-
-                                pictureBox = new PictureBox();
                                 pictureBox.Image = Image.FromStream(ms);
                                 pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
+                                pictureBox.Dock = DockStyle.Fill;
                                 pictureBox.Anchor = AnchorStyles.None;
                                 pictureBox.Location = new Point((scanPanel.Width - pictureBox.Width) / 2, (scanPanel.Height - pictureBox.Height) / 2);
                                 scanPanel.Controls.Add(pictureBox);
@@ -361,22 +360,37 @@ namespace BreastWise
                     sb.AppendLine(slice.ToString());
                 }
 
-                File.WriteAllText("cancerous_slices.csv", sb.ToString());
-                MessageBox.Show("Export successful!");
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "CSV file|*.csv";
+                saveFileDialog1.Title = "Save cancerous slices to CSV file";
+                saveFileDialog1.ShowDialog();
+
+                if (saveFileDialog1.FileName != "")
+                {
+                    File.WriteAllText(saveFileDialog1.FileName, sb.ToString());
+                    MessageBox.Show("Export successful!");
+                }
             }
             else if (cancerousSlices != null && cancerousSlices.Count == 0)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Cancerous Slices: None");
 
-                File.WriteAllText("cancerous_slices.csv", sb.ToString());
-                MessageBox.Show("Export successful!");
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "CSV file|*.csv";
+                saveFileDialog1.Title = "Save cancerous slices to CSV file";
+                saveFileDialog1.ShowDialog();
+
+                if (saveFileDialog1.FileName != "")
+                {
+                    File.WriteAllText(saveFileDialog1.FileName, sb.ToString());
+                    MessageBox.Show("Export successful!");
+                }
             }
             else
             {
                 MessageBox.Show("Scan not analysed.");
             }
         }
-
     }
 }

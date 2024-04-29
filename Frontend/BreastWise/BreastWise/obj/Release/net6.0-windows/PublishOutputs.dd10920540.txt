@@ -1,0 +1,15 @@
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise.exe
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise.deps.json
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise.runtimeconfig.json
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise.pdb
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Aspose.Imaging.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\fo-dicom.core.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Microsoft.Extensions.Options.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Microsoft.Extensions.Primitives.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Microsoft.Toolkit.HighPerformance.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\Newtonsoft.Json.dll
+C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise.xml

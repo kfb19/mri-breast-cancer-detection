@@ -161,11 +161,11 @@ def main():
         """
 
     # Directory information.
-    data_dir = 'E:\\data\\output\\bmp_out_scantype_classify'
-    results_path = "E:\\data\\output\\results\\densenet_scantype_multi"
-    save_file = "E:\\data\\output\\nets\\densenet_scantype_multi.pth"
-    file_name = "densenet_scantype_multi.txt"
-    folder = "densenet_scantype_multi"
+    data_dir = 'PATH\\bmp_out_scantype_classify'
+    results_path = 'PATH\\results\\densenet_scantype_multi'
+    save_file = 'PATH\\nets\\densenet_scantype_multi.pth'
+    file_name = 'densenet_scantype_multi.txt'
+    folder = 'densenet_scantype_multi'
 
     # Length in pixels of size of image once resized for the network.
     img_size = 128

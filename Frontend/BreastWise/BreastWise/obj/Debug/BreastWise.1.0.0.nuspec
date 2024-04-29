@@ -6,6 +6,7 @@
     <title>BreastWise</title>
     <authors>BreastWise</authors>
     <icon>breastwise.png</icon>
+    <readme>README.md</readme>
     <description>A breast cancer detection application frontend.</description>
     <releaseNotes>Version 1.0.0 of Breastwise, implementing a frontend for the API.</releaseNotes>
     <tags>breast cancer detection cnn forms frontend breastwise</tags>
@@ -28,5 +29,6 @@
     <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.dll" target="lib\net6.0-windows7.0\BreastWise.dll" />
     <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\BreastWise\bin\Debug\net6.0-windows\BreastWise.xml" target="lib\net6.0-windows7.0\BreastWise.xml" />
     <file src="C:\Users\kate\OneDrive\Desktop\Downloads\breastwise.png" target="\breastwise.png" />
+    <file src="C:\Users\kate\OneDrive\Desktop\University\Final-Year-Project\breast-cancer-detection-localisation\Frontend\BreastWise\README.md" target="\README.md" />
   </files>
 </package>
